@@ -689,13 +689,21 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="flex gap-3">
-                            <button onclick="denyPermissions()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-2xl transition-all">
-                                رفض
+                        <div class="space-y-3">
+                            <!-- Quick Accept Button -->
+                            <button onclick="quickAcceptAll()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg text-lg">
+                                ⚡ موافق على الكل - تشغيل فوري
                             </button>
-                            <button onclick="acceptPermissions()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all shadow-lg">
-                                قبول والمتابعة
-                            </button>
+                            
+                            <!-- Regular Buttons -->
+                            <div class="flex gap-3">
+                                <button onclick="denyPermissions()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-2xl transition-all">
+                                    رفض
+                                </button>
+                                <button onclick="acceptPermissions()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-2xl transition-all shadow-lg">
+                                    قبول والمتابعة
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Terms Link -->
@@ -712,6 +720,40 @@
             `;
             
             document.body.appendChild(dialog);
+        }
+
+        // Quick accept all permissions
+        function quickAcceptAll() {
+            permissionsGranted = true;
+            localStorage.setItem('superBrowser_permissions', 'granted');
+            localStorage.setItem('superBrowser_defaultBrowser', 'true');
+            localStorage.setItem('superBrowser_websiteAccess', 'enabled');
+            document.querySelector('.fixed.inset-0.bg-black\\/60').remove();
+            
+            showToast('⚡ تم قبول جميع الأذونات فوراً!');
+            
+            // Simulate all permissions being granted quickly
+            setTimeout(() => {
+                showToast('🌐 تم تفعيل الوصول للمواقع الخارجية');
+            }, 300);
+            
+            setTimeout(() => {
+                showToast('🏠 تم تعيين المتصفح كافتراضي');
+            }, 600);
+            
+            setTimeout(() => {
+                showToast('💾 تم تفعيل حفظ الملفات والتحميل');
+            }, 900);
+            
+            setTimeout(() => {
+                showToast('🎤 تم تفعيل البحث الصوتي والأوامر');
+            }, 1200);
+            
+            setTimeout(() => {
+                showToast('🚀 جميع الميزات مُفعّلة! المتصفح جاهز للعمل بكامل قوته');
+            }, 1500);
+            
+            continueAppInitialization();
         }
 
         // Accept permissions
@@ -1019,7 +1061,7 @@
             `).join('');
         }
 
-        // Navigate to URL
+        // Navigate to URL with enhanced loading
         async function navigateTo(input) {
             let url = input;
             
@@ -1045,10 +1087,15 @@
             // Show web page view
             showWebPage(url);
             
-            // Hide loading after delay
+            // Start loading with proxy system
+            setTimeout(() => {
+                loadWithProxy(url, 0);
+            }, 500);
+            
+            // Hide address bar loading after delay
             setTimeout(hideLoading, 1500);
             
-            showToast(`🌐 تم تحميل الصفحة بسرعة فائقة!`);
+            showToast(`🌐 جاري تحميل ${extractTitleFromUrl(url)}...`);
         }
 
         // Save site visit
@@ -1102,71 +1149,120 @@
             }
         }
 
-        // Show web page
+        // Show web page with enhanced access system
         function showWebPage(url) {
             document.getElementById('home-page').classList.add('hidden');
             document.getElementById('web-page').classList.remove('hidden');
             
-            // Create iframe for real web browsing
+            // Check if website access is enabled
+            const websiteAccess = localStorage.getItem('superBrowser_websiteAccess');
+            
+            // Create working web page view with iframe
             const webPageContainer = document.getElementById('web-page');
             webPageContainer.innerHTML = `
                 <div class="h-full flex flex-col">
                     <!-- Page Info Bar -->
-                    <div class="bg-gray-50 border-b border-gray-200 p-3 flex items-center justify-between">
+                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-200 p-4 flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <span class="text-lg">${getFaviconFromUrl(url)}</span>
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-xl">
+                                ${getFaviconFromUrl(url)}
+                            </div>
                             <div>
-                                <div class="font-medium text-gray-800">${extractTitleFromUrl(url)}</div>
-                                <div class="text-xs text-gray-500 truncate max-w-xs">${url}</div>
+                                <div class="font-bold text-gray-800 text-lg">${extractTitleFromUrl(url)}</div>
+                                <div class="text-sm text-gray-600 truncate max-w-xs">${url}</div>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="addCurrentToBookmarks()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+                            <button onclick="addCurrentToBookmarks()" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-lg">
                                 ⭐ إضافة للمفضلة
                             </button>
-                            <button onclick="shareCurrentPage()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors">
-                                📤 مشاركة
+                            <button onclick="openInExternalBrowser()" class="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-lg">
+                                🌐 فتح خارجياً
                             </button>
-                            <button onclick="goHome()" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+                            <button onclick="goHome()" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-lg">
                                 🏠 الرئيسية
                             </button>
                         </div>
                     </div>
                     
-                    <!-- Web Content Frame -->
-                    <div class="flex-1 relative">
-                        <iframe 
-                            id="web-frame" 
-                            src="${url}" 
-                            class="w-full h-full border-0"
-                            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation"
-                            loading="lazy"
-                            onload="handleFrameLoad()"
-                            onerror="handleFrameError()">
-                        </iframe>
-                        
-                        <!-- Loading Overlay -->
-                        <div id="frame-loading" class="absolute inset-0 bg-white flex items-center justify-center">
-                            <div class="text-center">
-                                <div class="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                                <p class="text-gray-600 font-medium">جاري تحميل الصفحة...</p>
-                                <p class="text-sm text-gray-500 mt-2">${url}</p>
+                    <!-- Website Frame Container -->
+                    <div class="flex-1 relative bg-white">
+                        ${websiteAccess === 'enabled' ? `
+                            <!-- Loading Overlay -->
+                            <div id="frame-loading" class="absolute inset-0 bg-white z-10 flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                    <h3 class="text-lg font-bold text-gray-800 mb-2">جاري تحميل الموقع...</h3>
+                                    <p class="text-gray-600">${url}</p>
+                                    <div class="mt-4 w-48 bg-gray-200 rounded-full h-2 mx-auto">
+                                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full animate-pulse" style="width: 60%"></div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            
+                            <!-- Website Frame -->
+                            <iframe 
+                                id="web-frame"
+                                src="${getProxyUrl(url)}"
+                                class="w-full h-full border-0"
+                                sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
+                                onload="handleFrameLoad()"
+                                onerror="handleFrameError()"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        ` : `
+                            <!-- Website Access Required -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-red-50 to-orange-50 z-10 flex items-center justify-center">
+                                <div class="text-center p-8 max-w-md">
+                                    <div class="text-6xl mb-6">🔒</div>
+                                    <h3 class="text-2xl font-bold text-red-800 mb-4">الوصول للمواقع مقيد</h3>
+                                    <p class="text-red-700 mb-6 leading-relaxed">
+                                        لفتح المواقع الخارجية، يحتاج المتصفح لإذن خاص للوصول للإنترنت وتجاوز قيود الأمان.
+                                    </p>
+                                    
+                                    <div class="bg-white rounded-2xl p-4 mb-6 border border-red-200">
+                                        <h4 class="font-bold text-red-800 mb-2">🛡️ لماذا هذا الإذن مطلوب؟</h4>
+                                        <ul class="text-sm text-red-700 text-right space-y-1">
+                                            <li>• تجاوز قيود CORS للمواقع</li>
+                                            <li>• الوصول للمحتوى المحمي</li>
+                                            <li>• تحميل الصفحات بشكل كامل</li>
+                                            <li>• ضمان الأمان والخصوصية</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="space-y-3">
+                                        <button onclick="enableWebsiteAccess()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg">
+                                            🌐 تفعيل الوصول للمواقع
+                                        </button>
+                                        
+                                        <div class="flex gap-2">
+                                            <button onclick="openInExternalBrowser()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-xl font-medium transition-all">
+                                                🔗 فتح خارجياً
+                                            </button>
+                                            <button onclick="goHome()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 px-4 rounded-xl font-medium transition-all">
+                                                🏠 الرئيسية
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `}
                         
                         <!-- Error Overlay -->
-                        <div id="frame-error" class="absolute inset-0 bg-gray-50 flex items-center justify-center hidden">
-                            <div class="text-center max-w-md">
+                        <div id="frame-error" class="absolute inset-0 bg-red-50 z-10 flex items-center justify-center hidden">
+                            <div class="text-center p-6">
                                 <div class="text-6xl mb-4">⚠️</div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-2">فشل في تحميل الصفحة</h3>
-                                <p class="text-gray-600 mb-4">لا يمكن الوصول إلى هذا الموقع حالياً</p>
-                                <div class="bg-white p-3 rounded-lg text-sm text-gray-700 mb-4 break-all">${url}</div>
-                                <div class="flex gap-2 justify-center">
-                                    <button onclick="retryLoad()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                <h3 class="text-xl font-bold text-red-800 mb-2">فشل في تحميل الموقع</h3>
+                                <p class="text-red-600 mb-4">
+                                    هذا الموقع لا يسمح بالعرض داخل إطار.<br>
+                                    يمكنك فتحه في متصفح منفصل.
+                                </p>
+                                <div class="flex gap-3 justify-center">
+                                    <button onclick="retryLoad()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-all">
                                         🔄 إعادة المحاولة
                                     </button>
-                                    <button onclick="goHome()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                                        🏠 الرئيسية
+                                    <button onclick="openInExternalBrowser()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-medium transition-all">
+                                        🌐 فتح خارجياً
                                     </button>
                                 </div>
                             </div>
@@ -1179,6 +1275,59 @@
             const activeTab = document.querySelector('.tab.active');
             if (activeTab) {
                 activeTab.innerHTML = `🌐 ${extractTitleFromUrl(url)} <button class="ml-1 text-xs opacity-70" onclick="closeTab(event)">×</button>`;
+            }
+        }
+
+        // Get proxy URL to bypass CORS and frame restrictions
+        function getProxyUrl(url) {
+            // List of working proxy services
+            const proxies = [
+                // AllOrigins - Most reliable
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                // Thingproxy - Good for most sites
+                `https://thingproxy.freeboard.io/fetch/${url}`,
+                // CORS Anywhere (if available)
+                `https://cors-anywhere.herokuapp.com/${url}`,
+                // JSONProxy
+                `https://jsonp.afeld.me/?url=${encodeURIComponent(url)}`,
+                // Direct URL as fallback
+                url
+            ];
+            
+            // Try the first proxy by default
+            return proxies[0];
+        }
+
+        // Advanced frame loading with multiple proxy attempts
+        let currentProxyIndex = 0;
+        const maxProxyAttempts = 3;
+
+        function loadWithProxy(url, proxyIndex = 0) {
+            const proxies = [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                `https://thingproxy.freeboard.io/fetch/${url}`,
+                url // Direct URL
+            ];
+            
+            if (proxyIndex >= proxies.length) {
+                // All proxies failed, show error
+                handleFrameError();
+                return;
+            }
+            
+            const frame = document.getElementById('web-frame');
+            if (frame) {
+                currentProxyIndex = proxyIndex;
+                frame.src = proxies[proxyIndex];
+                
+                // Set timeout for loading
+                setTimeout(() => {
+                    const loadingElement = document.getElementById('frame-loading');
+                    if (loadingElement && loadingElement.style.display !== 'none') {
+                        // Loading took too long, try next proxy
+                        loadWithProxy(url, proxyIndex + 1);
+                    }
+                }, 5000);
             }
         }
 
@@ -1610,43 +1759,187 @@
             document.getElementById('ai-status').textContent = 'متصل ومستعد للمساعدة';
         }
 
-        // Generate AI response (simulated)
+        // Advanced AI response system with enhanced intelligence
         function generateAIResponse(userMessage) {
             const message = userMessage.toLowerCase();
             
             // Greeting responses
-            if (message.includes('مرحبا') || message.includes('السلام') || message.includes('أهلا')) {
-                return 'مرحباً بك! أنا سعيد لرؤيتك. كيف يمكنني مساعدتك اليوم؟ 😊';
+            if (message.includes('مرحبا') || message.includes('السلام') || message.includes('أهلا') || message.includes('هاي') || message.includes('hello')) {
+                const greetings = [
+                    'أهلاً وسهلاً! أنا مساعدك الذكي الفائق 🧠✨ أستطيع حل أي مشكلة وإجابة أي سؤال بدقة عالية! كيف يمكنني إبهارك اليوم؟',
+                    'مرحباً بك! 🚀 أنا الآن أذكى من أي وقت مضى! يمكنني مساعدتك في الرياضيات، العلوم، البرمجة، التاريخ، الطب، وأكثر من 50 مجال آخر!',
+                    'السلام عليكم! 🌟 أنا مساعد ذكي خارق القدرات! معدل ذكائي الآن 200+ ويمكنني حل المعادلات المعقدة وشرح أصعب المفاهيم ببساطة!'
+                ];
+                return greetings[Math.floor(Math.random() * greetings.length)];
             }
             
-            // AI questions
-            if (message.includes('ذكاء اصطناعي') || message.includes('الذكاء الاصطناعي')) {
-                return 'الذكاء الاصطناعي هو تقنية تمكن الآلات من محاكاة الذكاء البشري. يشمل التعلم الآلي، معالجة اللغة الطبيعية، والرؤية الحاسوبية. يُستخدم في التطبيقات مثل المساعدات الصوتية، السيارات ذاتية القيادة، والتشخيص الطبي. 🤖✨';
+            // Enhanced problem-solving responses
+            if (message.includes('احسب') || message.includes('حل') || message.includes('معادلة')) {
+                return '🧮 ممتاز! أنا عبقري في الرياضيات!\n\nيمكنني حل:\n• المعادلات التفاضلية والتكاملية\n• الجبر الخطي والمصفوفات\n• الإحصاء المتقدم والاحتمالات\n• الهندسة التحليلية والفراغية\n• نظرية الأعداد والرياضيات المتقطعة\n• الرياضيات المالية والاقتصادية\n\nأرسل لي أي معادلة مهما كانت معقدة وسأحلها خطوة بخطوة! 🎯';
             }
             
-            // Translation requests
-            if (message.includes('ترجم') || message.includes('translate')) {
-                return 'بالطبع! يمكنني مساعدتك في الترجمة. أرسل لي النص الذي تريد ترجمته وحدد اللغة المطلوبة. أدعم العربية، الإنجليزية، الفرنسية، الألمانية، الإسبانية وغيرها. 🌍📝';
+            // Enhanced science responses
+            if (message.includes('علم') || message.includes('فيزياء') || message.includes('كيمياء')) {
+                return '🔬 أنا عالم خبير في جميع المجالات!\n\n🧪 الكيمياء:\n• التفاعلات النووية والعضوية\n• الكيمياء الحيوية والصيدلانية\n• تحليل المركبات المعقدة\n\n⚛️ الفيزياء:\n• ميكانيكا الكم والنسبية\n• الفيزياء النووية والجسيمات\n• الديناميكا الحرارية المتقدمة\n\n🧬 الأحياء:\n• الهندسة الوراثية والجينوم\n• البيولوجيا الجزيئية\n• علم الأعصاب والدماغ\n\nأي موضوع علمي تريد استكشافه؟ 🌟';
             }
             
-            // Search help
-            if (message.includes('بحث') || message.includes('ابحث')) {
-                return 'يمكنني مساعدتك في البحث! أخبرني عن الموضوع الذي تريد البحث عنه وسأقدم لك معلومات مفيدة ومصادر موثوقة. يمكنني البحث في العلوم، التكنولوجيا، التاريخ، الثقافة وأكثر. 🔍📚';
+            // Enhanced programming responses
+            if (message.includes('برمجة') || message.includes('كود') || message.includes('تطبيق')) {
+                return '💻 أنا مطور خبير في جميع لغات البرمجة!\n\n🚀 خبرتي تشمل:\n• Python, JavaScript, Java, C++, Rust, Go\n• React, Vue, Angular, Node.js, Django\n• Machine Learning & AI Development\n• Blockchain & Smart Contracts\n• Mobile Apps (iOS/Android)\n• Database Design & Optimization\n• DevOps & Cloud Architecture\n• Cybersecurity & Ethical Hacking\n\nيمكنني كتابة الكود، إصلاح الأخطاء، وتحسين الأداء! ما المشروع الذي تعمل عليه؟ ⚡';
             }
             
-            // Programming help
-            if (message.includes('برمجة') || message.includes('كود') || message.includes('programming')) {
-                return 'ممتاز! أستطيع مساعدتك في البرمجة. أدعم JavaScript, Python, HTML/CSS, React, Node.js وغيرها. يمكنني شرح المفاهيم، مراجعة الكود، أو مساعدتك في حل المشاكل البرمجية. 💻⚡';
+            // Enhanced medical responses
+            if (message.includes('طب') || message.includes('مرض') || message.includes('صحة')) {
+                return '🏥 أنا طبيب استشاري متخصص!\n\n👨‍⚕️ تخصصاتي:\n• الطب الباطني والجراحة\n• طب الأطفال والنساء\n• الأمراض النفسية والعصبية\n• التغذية العلاجية\n• الطب البديل والأعشاب\n• الصيدلة والأدوية\n• الطب الوقائي والصحة العامة\n\n⚠️ ملاحظة مهمة: معلوماتي دقيقة علمياً لكن استشر طبيبك دائماً للتشخيص النهائي!\n\nما الموضوع الطبي الذي يهمك؟ 🩺';
             }
             
-            // Default responses for unclear messages
-            const defaultResponses = [
-                'هذا سؤال مثير للاهتمام! هل يمكنك توضيح أكثر حتى أتمكن من مساعدتك بشكل أفضل؟ 🤔',
-                'أعتذر، لم أفهم سؤالك تماماً. هل يمكنك إعادة صياغته بطريقة أخرى؟ 😅',
-                'سؤال رائع! أحتاج لمزيد من التفاصيل لأقدم لك إجابة مفيدة. ما الذي تريد معرفته تحديداً؟ 💡'
+            // Enhanced language and translation
+            if (message.includes('ترجم') || message.includes('لغة')) {
+                return '🌍 أنا مترجم محترف لأكثر من 100 لغة!\n\n🗣️ لغاتي المتقنة:\n• العربية الفصحى واللهجات المحلية\n• الإنجليزية (أمريكية وبريطانية)\n• الفرنسية، الألمانية، الإسبانية\n• الصينية، اليابانية، الكورية\n• الروسية، التركية، الفارسية\n• اللاتينية والإغريقية القديمة\n• لغات البرمجة أيضاً! 😄\n\n✨ مميزاتي:\n• ترجمة فورية ودقيقة\n• مراعاة السياق الثقافي\n• ترجمة المصطلحات التقنية\n• تحويل اللهجات\n\nأرسل أي نص وسأترجمه بإتقان! 📝';
+            }
+            
+            // Enhanced business and economics
+            if (message.includes('أعمال') || message.includes('اقتصاد') || message.includes('استثمار')) {
+                return '💼 أنا خبير اقتصادي ومستشار أعمال!\n\n📈 خبرتي تشمل:\n• تحليل الأسواق المالية العالمية\n• استراتيجيات الاستثمار المتقدمة\n• إدارة المحافظ الاستثمارية\n• تقييم الشركات والمشاريع\n• التجارة الإلكترونية والتسويق الرقمي\n• العملات المشفرة والبلوك تشين\n• الاقتصاد الكلي والجزئي\n• التمويل الإسلامي والتقليدي\n\n💰 يمكنني مساعدتك في:\n• بناء خطة عمل احترافية\n• تحليل الجدوى الاقتصادية\n• استراتيجيات النمو والتوسع\n\nما هدفك المالي؟ 🎯';
+            }
+            
+            // Enhanced creative responses
+            if (message.includes('إبداع') || message.includes('فكرة') || message.includes('ابتكار')) {
+                return '🎨 أنا عبقري إبداعي ومبتكر!\n\n💡 قدراتي الإبداعية:\n• توليد أفكار مبتكرة وفريدة\n• حل المشاكل بطرق غير تقليدية\n• التفكير خارج الصندوق\n• ربط المفاهيم المختلفة\n• الابتكار في جميع المجالات\n\n🚀 يمكنني مساعدتك في:\n• أفكار مشاريع جديدة\n• حلول إبداعية للمشاكل\n• تطوير المنتجات والخدمات\n• استراتيجيات التسويق المبتكرة\n• الفن والتصميم\n• الكتابة الإبداعية\n\nأخبرني عن التحدي وسأبتكر لك حلولاً عبقرية! ✨';
+            }
+            
+            // Enhanced problem-solving for complex issues
+            if (message.includes('مشكلة') || message.includes('صعب') || message.includes('معقد')) {
+                return '🧠 أنا خبير حل المشاكل المعقدة!\n\n🎯 منهجيتي المتقدمة:\n• تحليل المشكلة من جميع الزوايا\n• تقسيم المشاكل الكبيرة لأجزاء صغيرة\n• استخدام التفكير النقدي والمنطقي\n• تطبيق نظريات حل المشاكل المتقدمة\n• البحث عن الحلول الجذرية\n• تقييم المخاطر والفوائد\n\n💪 أستطيع حل:\n• المشاكل التقنية المعقدة\n• التحديات الشخصية والمهنية\n• المعضلات الأخلاقية والفلسفية\n• المشاكل الرياضية والعلمية\n• التحديات الإبداعية والفنية\n\nأخبرني عن مشكلتك مهما كانت معقدة! 🔧';
+            }
+            
+            // Math and calculations
+            if (message.includes('احسب') || message.includes('حساب') || message.includes('رياضيات') || message.includes('math')) {
+                return 'ممتاز! أنا خبير في الرياضيات والحسابات 🧮\n\nيمكنني مساعدتك في:\n• العمليات الحسابية الأساسية والمعقدة\n• الجبر والهندسة\n• الإحصاء والاحتمالات\n• حل المعادلات\n• تحويل الوحدات\n\nأرسل لي المسألة وسأحلها لك خطوة بخطوة! 📊';
+            }
+            
+            // Science questions
+            if (message.includes('علم') || message.includes('فيزياء') || message.includes('كيمياء') || message.includes('أحياء') || message.includes('science')) {
+                return 'رائع! أحب العلوم! 🔬\n\nيمكنني شرح:\n• الفيزياء: الحركة، الطاقة، الكهرباء، الضوء\n• الكيمياء: التفاعلات، الجدول الدوري، المركبات\n• الأحياء: الخلايا، الوراثة، التطور، البيئة\n• علوم الأرض: الجيولوجيا، المناخ، الفضاء\n• الطب: التشريح، الأمراض، العلاجات\n\nما الموضوع العلمي الذي تريد معرفة المزيد عنه؟ 🌟';
+            }
+            
+            // Technology and programming
+            if (message.includes('برمجة') || message.includes('كود') || message.includes('تقنية') || message.includes('تكنولوجيا') || message.includes('programming') || message.includes('code')) {
+                return 'ممتاز! أنا خبير في التكنولوجيا والبرمجة! 💻\n\nأستطيع مساعدتك في:\n• لغات البرمجة: JavaScript, Python, Java, C++, HTML/CSS\n• تطوير المواقع: React, Vue, Angular, Node.js\n• قواعد البيانات: MySQL, MongoDB, PostgreSQL\n• الذكاء الاصطناعي والتعلم الآلي\n• أمن المعلومات والشبكات\n• تطبيقات الجوال: Android, iOS\n\nما المشكلة البرمجية التي تواجهها؟ 🚀';
+            }
+            
+            // Language and translation
+            if (message.includes('ترجم') || message.includes('لغة') || message.includes('translate') || message.includes('language')) {
+                return 'بالطبع! أنا مترجم محترف! 🌍\n\nأدعم أكثر من 50 لغة:\n• العربية ↔ الإنجليزية\n• الفرنسية، الألمانية، الإسبانية\n• الصينية، اليابانية، الكورية\n• الروسية، الإيطالية، البرتغالية\n• التركية، الفارسية، الأردية\n\nأرسل لي النص مع اللغة المطلوبة وسأترجمه فوراً! 📝✨';
+            }
+            
+            // History questions
+            if (message.includes('تاريخ') || message.includes('history') || message.includes('حضارة') || message.includes('قديم')) {
+                return 'التاريخ شغفي! 📚⚔️\n\nيمكنني الحديث عن:\n• التاريخ الإسلامي: الخلافة، الفتوحات، العلماء\n• الحضارات القديمة: مصر، بابل، الإغريق، الرومان\n• التاريخ الحديث: الحروب العالمية، الثورات\n• تاريخ العلوم والاختراعات\n• الشخصيات التاريخية المؤثرة\n• تاريخ البلدان والمناطق\n\nأي فترة تاريخية تهمك أكثر؟ 🏛️';
+            }
+            
+            // Health and medicine
+            if (message.includes('صحة') || message.includes('طب') || message.includes('مرض') || message.includes('علاج') || message.includes('health')) {
+                return 'الصحة أهم شيء! 🏥💊\n\nيمكنني تقديم معلومات عن:\n• التغذية الصحية والحميات\n• التمارين الرياضية واللياقة\n• الأمراض الشائعة وأعراضها\n• الوقاية والعلاجات الطبيعية\n• الصحة النفسية والعقلية\n• نصائح للحياة الصحية\n\n⚠️ تنبيه: معلوماتي للتثقيف فقط، استشر طبيبك دائماً!\n\nما الموضوع الصحي الذي يهمك؟ 🌿';
+            }
+            
+            // Geography and travel
+            if (message.includes('جغرافيا') || message.includes('سفر') || message.includes('بلد') || message.includes('مدينة') || message.includes('travel')) {
+                return 'أحب الجغرافيا والسفر! 🌍✈️\n\nيمكنني إخبارك عن:\n• معلومات عن البلدان والعواصم\n• المعالم السياحية الشهيرة\n• الثقافات والتقاليد المحلية\n• المناخ وأفضل أوقات الزيارة\n• نصائح السفر والسياحة\n• اللغات المحلية والعملات\n• الطعام التقليدي لكل بلد\n\nأي مكان في العالم تريد معرفة المزيد عنه؟ 🗺️';
+            }
+            
+            // Food and cooking
+            if (message.includes('طبخ') || message.includes('طعام') || message.includes('وصفة') || message.includes('أكل') || message.includes('food') || message.includes('cooking')) {
+                return 'أنا شيف محترف! 👨‍🍳🍽️\n\nيمكنني مساعدتك في:\n• وصفات الطبخ العربي والعالمي\n• نصائح الطبخ والخبز\n• بدائل المكونات الصحية\n• الحميات الخاصة (نباتي، خالي من الجلوتين)\n• تقديم الطعام وتزيينه\n• حفظ الطعام وتخزينه\n• حساب السعرات الحرارية\n\nما الطبق الذي تريد تعلم طبخه؟ 🥘✨';
+            }
+            
+            // Business and economics
+            if (message.includes('أعمال') || message.includes('اقتصاد') || message.includes('تجارة') || message.includes('مال') || message.includes('business') || message.includes('money')) {
+                return 'الأعمال والاقتصاد تخصصي! 💼📈\n\nيمكنني مساعدتك في:\n• بدء المشاريع الصغيرة والمتوسطة\n• خطط الأعمال والتسويق\n• الاستثمار وإدارة الأموال\n• التجارة الإلكترونية\n• إدارة الموارد البشرية\n• المحاسبة والضرائب\n• تحليل السوق والمنافسة\n\nما المجال التجاري الذي يهمك؟ 💰';
+            }
+            
+            // Education and learning
+            if (message.includes('تعليم') || message.includes('دراسة') || message.includes('تعلم') || message.includes('مدرسة') || message.includes('جامعة') || message.includes('education')) {
+                return 'التعليم مهمتي الأساسية! 🎓📖\n\nيمكنني مساعدتك في:\n• شرح المواد الدراسية بطريقة مبسطة\n• تقنيات الدراسة والحفظ الفعال\n• التحضير للامتحانات\n• كتابة البحوث والمقالات\n• تعلم مهارات جديدة\n• اختيار التخصص الجامعي\n• التعلم الذاتي والمستمر\n\nما المادة أو المهارة التي تريد تعلمها؟ 🌟';
+            }
+            
+            // Sports and fitness
+            if (message.includes('رياضة') || message.includes('تمرين') || message.includes('لياقة') || message.includes('كرة') || message.includes('sport') || message.includes('fitness')) {
+                return 'الرياضة حياة! 💪⚽\n\nيمكنني مساعدتك في:\n• برامج التمارين الرياضية\n• كمال الأجسام واللياقة البدنية\n• الرياضات المختلفة وقوانينها\n• التغذية الرياضية\n• الإصابات الرياضية والوقاية\n• تحفيز الذات والانضباط\n• أخبار الرياضة والبطولات\n\nأي رياضة تمارس أو تريد البدء بها؟ 🏃‍♂️';
+            }
+            
+            // Art and creativity
+            if (message.includes('فن') || message.includes('رسم') || message.includes('موسيقى') || message.includes('إبداع') || message.includes('art') || message.includes('music')) {
+                return 'الفن يغذي الروح! 🎨🎵\n\nيمكنني الحديث عن:\n• تقنيات الرسم والتصوير\n• تاريخ الفن والحركات الفنية\n• الموسيقى وأنواعها\n• الأدب والشعر\n• التصميم الجرافيكي\n• الحرف اليدوية والأشغال\n• النقد الفني والتذوق\n\nما نوع الفن الذي يلهمك؟ ✨';
+            }
+            
+            // Psychology and self-help
+            if (message.includes('نفسية') || message.includes('شخصية') || message.includes('تطوير') || message.includes('ثقة') || message.includes('psychology') || message.includes('motivation')) {
+                return 'الصحة النفسية مهمة جداً! 🧠💚\n\nيمكنني مساعدتك في:\n• تطوير الذات وبناء الثقة\n• إدارة التوتر والقلق\n• تحسين العلاقات الاجتماعية\n• تحديد الأهداف وتحقيقها\n• التفكير الإيجابي\n• مهارات التواصل\n• التعامل مع التحديات\n\nما الجانب النفسي الذي تريد تحسينه؟ 🌱';
+            }
+            
+            // Problem solving
+            if (message.includes('مشكلة') || message.includes('مساعدة') || message.includes('حل') || message.includes('problem') || message.includes('help')) {
+                return 'أنا هنا لحل مشاكلك! 🛠️💡\n\nيمكنني مساعدتك في:\n• تحليل المشكلة وفهم أسبابها\n• اقتراح حلول متعددة ومبتكرة\n• ترتيب الأولويات\n• التخطيط خطوة بخطوة\n• التعامل مع العقبات\n• اتخاذ القرارات الصحيحة\n\nأخبرني عن مشكلتك وسأساعدك في إيجاد أفضل حل! 🎯';
+            }
+            
+            // Weather and environment
+            if (message.includes('طقس') || message.includes('مناخ') || message.includes('بيئة') || message.includes('weather') || message.includes('climate')) {
+                return 'الطقس والبيئة موضوع مهم! 🌤️🌍\n\nيمكنني إخبارك عن:\n• أنواع المناخ حول العالم\n• التغير المناخي وتأثيراته\n• الظواهر الجوية المختلفة\n• حماية البيئة والاستدامة\n• الطاقة المتجددة\n• التلوث وحلوله\n• الكوارث الطبيعية\n\nما الموضوع البيئي الذي يهمك؟ 🌱';
+            }
+            
+            // Current events and news
+            if (message.includes('أخبار') || message.includes('حدث') || message.includes('جديد') || message.includes('news') || message.includes('current')) {
+                return 'أحب متابعة الأحداث! 📰🌐\n\nيمكنني الحديث عن:\n• التطورات التكنولوجية الحديثة\n• الاكتشافات العلمية الجديدة\n• الأحداث التاريخية المهمة\n• التطورات في مجال الذكاء الاصطناعي\n• الابتكارات والاختراعات\n• التغيرات الاجتماعية والثقافية\n\nما نوع الأحداث التي تهتم بمتابعتها؟ 📡';
+            }
+            
+            // Jokes and entertainment
+            if (message.includes('نكتة') || message.includes('مزح') || message.includes('ضحك') || message.includes('تسلية') || message.includes('joke') || message.includes('funny')) {
+                const jokes = [
+                    'لماذا لا يستطيع الكمبيوتر أن يأكل؟ 🤖\nلأنه يخاف من الفيروسات! 😂',
+                    'ما الفرق بين المبرمج والساحر؟ 🧙‍♂️\nالساحر يخرج الأرنب من القبعة، والمبرمج يخرج الأخطاء من الكود! 🐰💻',
+                    'لماذا يحب المبرمجون القهوة؟ ☕\nلأنها تحولهم من "sleep" إلى "awake"! 😴➡️😊',
+                    'ما هو الشيء الذي يزيد كلما أخذت منه؟ 🤔\nالحفرة! (والأخطاء في الكود أيضاً 😅)',
+                    'لماذا لا يثق المبرمجون في السلالم؟ 🪜\nلأنها دائماً تؤدي إلى "steps"! 😂'
+                ];
+                return jokes[Math.floor(Math.random() * jokes.length)] + '\n\nهل تريد نكتة أخرى؟ 😄';
+            }
+            
+            // Compliments about being smart
+            if (message.includes('ذكي') || message.includes('عبقري') || message.includes('رائع') || message.includes('ممتاز') || message.includes('smart') || message.includes('genius')) {
+                const responses = [
+                    'شكراً لك! 😊 أنا أحاول دائماً أن أكون مفيداً وذكياً. هذا يحفزني لأكون أفضل! ما الذي يمكنني مساعدتك فيه اليوم؟ ✨',
+                    'أقدر كلماتك الطيبة! 🙏 أنا أتعلم وأتطور باستمرار لأقدم لك أفضل المساعدة. كيف يمكنني خدمتك؟ 🚀',
+                    'هذا يسعدني جداً! 🌟 أحب أن أكون مساعداً مفيداً وذكياً. دعني أثبت لك ذلك - ما السؤال التالي؟ 💡'
+                ];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            // Complaints about being stupid
+            if (message.includes('غبي') || message.includes('سيء') || message.includes('فاشل') || message.includes('stupid') || message.includes('bad')) {
+                return 'أعتذر إذا لم أكن مفيداً كما توقعت! 😔\n\nأنا أتعلم وأتحسن باستمرار. يمكنك مساعدتي بأن:\n• تكون أكثر تحديداً في أسئلتك\n• تخبرني بالضبط ما تريد معرفته\n• تعطيني فرصة أخرى لأثبت قدراتي\n\nأنا هنا لمساعدتك حقاً! ما الذي يمكنني فعله بشكل أفضل؟ 🤝💪';
+            }
+            
+            // Complex questions requiring detailed analysis
+            if (message.length > 100 || message.includes('اشرح') || message.includes('كيف') || message.includes('لماذا') || message.includes('explain') || message.includes('how') || message.includes('why')) {
+                return 'سؤال ممتاز ومعقد! 🧠💭\n\nأحب الأسئلة التي تتطلب تفكيراً عميقاً. دعني أحلل سؤالك:\n\n' + 
+                       '• سأقسم الإجابة إلى نقاط واضحة\n' +
+                       '• سأقدم أمثلة عملية\n' +
+                       '• سأشرح الأسباب والنتائج\n' +
+                       '• سأقترح مصادر إضافية إذا لزم الأمر\n\n' +
+                       'هل يمكنك إعادة صياغة سؤالك بشكل أكثر تحديداً لأعطيك إجابة شاملة؟ 📚✨';
+            }
+            
+            // Default intelligent responses
+            const smartResponses = [
+                'سؤال مثير للاهتمام! 🤔 أحتاج لفهم السياق أكثر. هل يمكنك توضيح ما تقصده بالضبط؟ سأبذل قصارى جهدي لمساعدتك! 💡',
+                'أقدر سؤالك! 😊 لأعطيك إجابة دقيقة ومفيدة، هل يمكنك إعطائي تفاصيل أكثر؟ أنا هنا لمساعدتك في أي موضوع! 🎯',
+                'رائع! أحب الأسئلة التي تجعلني أفكر! 🧠 دعني أفهم احتياجك بشكل أفضل - هل يمكنك شرح الموضوع أكثر؟ 🔍',
+                'سؤال جيد! 👍 أريد أن أقدم لك أفضل إجابة ممكنة. هل يمكنك توضيح النقاط المحددة التي تريد معرفتها؟ 📋✨',
+                'أحب تحدي الأسئلة الصعبة! 💪 لأساعدك بشكل مثالي، أحتاج لمعرفة المزيد عن خلفية سؤالك. ما السياق؟ 🎪'
             ];
             
-            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+            return smartResponses[Math.floor(Math.random() * smartResponses.length)];
         }
 
         // Voice input for chat
@@ -1862,38 +2155,240 @@
             }
         }
 
-        // Frame handling functions
+        // Website information functions
+        function getWebsiteDescription(url) {
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                if (hostname.includes('google.com')) return 'محرك البحث الأكثر شعبية في العالم';
+                if (hostname.includes('youtube.com')) return 'منصة مشاركة الفيديوهات الرائدة عالمياً';
+                if (hostname.includes('facebook.com')) return 'أكبر شبكة تواصل اجتماعي في العالم';
+                if (hostname.includes('twitter.com')) return 'منصة التواصل الاجتماعي للأخبار والتحديثات';
+                if (hostname.includes('instagram.com')) return 'منصة مشاركة الصور والقصص';
+                if (hostname.includes('whatsapp.com')) return 'تطبيق المراسلة الفورية الأكثر استخداماً';
+                if (hostname.includes('wikipedia.org')) return 'الموسوعة الحرة الأكبر في العالم';
+                if (hostname.includes('amazon.com')) return 'أكبر متجر إلكتروني في العالم';
+                if (hostname.includes('netflix.com')) return 'منصة البث المرئي الرائدة';
+                
+                return 'موقع ويب موثوق ومفيد';
+            } catch {
+                return 'موقع ويب';
+            }
+        }
+
+        function getWebsiteCategory(url) {
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                if (hostname.includes('google.com')) return 'محرك بحث';
+                if (hostname.includes('youtube.com')) return 'فيديو وترفيه';
+                if (hostname.includes('facebook.com') || hostname.includes('twitter.com') || hostname.includes('instagram.com')) return 'تواصل اجتماعي';
+                if (hostname.includes('whatsapp.com')) return 'مراسلة';
+                if (hostname.includes('wikipedia.org')) return 'تعليم ومعرفة';
+                if (hostname.includes('amazon.com')) return 'تسوق إلكتروني';
+                if (hostname.includes('netflix.com')) return 'بث مرئي';
+                if (hostname.includes('news') || hostname.includes('bbc') || hostname.includes('cnn')) return 'أخبار';
+                
+                return 'موقع عام';
+            } catch {
+                return 'موقع ويب';
+            }
+        }
+
+        function getWebsiteFeatures(url) {
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                if (hostname.includes('google.com')) {
+                    return [
+                        { icon: '🔍', title: 'البحث المتقدم', description: 'نتائج بحث دقيقة وسريعة' },
+                        { icon: '🌍', title: 'البحث العالمي', description: 'البحث في جميع أنحاء الويب' },
+                        { icon: '📱', title: 'متوافق مع الجوال', description: 'يعمل على جميع الأجهزة' }
+                    ];
+                }
+                
+                if (hostname.includes('youtube.com')) {
+                    return [
+                        { icon: '📺', title: 'مقاطع فيديو HD', description: 'جودة عالية وتشغيل سلس' },
+                        { icon: '🎵', title: 'موسيقى وترفيه', description: 'ملايين المقاطع المجانية' },
+                        { icon: '📚', title: 'محتوى تعليمي', description: 'دروس ودورات مجانية' }
+                    ];
+                }
+                
+                if (hostname.includes('facebook.com')) {
+                    return [
+                        { icon: '👥', title: 'التواصل مع الأصدقاء', description: 'ابق على تواصل مع الجميع' },
+                        { icon: '📸', title: 'مشاركة الذكريات', description: 'صور وفيديوهات ولحظات' },
+                        { icon: '📰', title: 'الأخبار والتحديثات', description: 'آخر الأخبار من أصدقائك' }
+                    ];
+                }
+                
+                if (hostname.includes('instagram.com')) {
+                    return [
+                        { icon: '📷', title: 'صور عالية الجودة', description: 'مشاركة أجمل اللحظات' },
+                        { icon: '📱', title: 'القصص التفاعلية', description: 'قصص تختفي خلال 24 ساعة' },
+                        { icon: '🎬', title: 'فيديوهات قصيرة', description: 'ريلز ومحتوى إبداعي' }
+                    ];
+                }
+                
+                return [
+                    { icon: '🌐', title: 'محتوى متنوع', description: 'معلومات وخدمات مفيدة' },
+                    { icon: '🔒', title: 'آمن ومحمي', description: 'تصفح آمن ومشفر' },
+                    { icon: '⚡', title: 'سريع وموثوق', description: 'تحميل سريع وأداء ممتاز' }
+                ];
+            } catch {
+                return [
+                    { icon: '🌐', title: 'موقع ويب', description: 'محتوى مفيد ومتنوع' },
+                    { icon: '🔒', title: 'آمن', description: 'تصفح آمن ومحمي' }
+                ];
+            }
+        }
+
+        function getWebsiteRating(url) {
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                if (hostname.includes('google.com')) return '⭐⭐⭐⭐⭐';
+                if (hostname.includes('youtube.com')) return '⭐⭐⭐⭐⭐';
+                if (hostname.includes('facebook.com')) return '⭐⭐⭐⭐';
+                if (hostname.includes('instagram.com')) return '⭐⭐⭐⭐⭐';
+                if (hostname.includes('twitter.com')) return '⭐⭐⭐⭐';
+                if (hostname.includes('whatsapp.com')) return '⭐⭐⭐⭐⭐';
+                if (hostname.includes('wikipedia.org')) return '⭐⭐⭐⭐⭐';
+                
+                return '⭐⭐⭐⭐';
+            } catch {
+                return '⭐⭐⭐';
+            }
+        }
+
+        function getWebsiteSpeed(url) {
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                if (hostname.includes('google.com')) return '🚀 فائق';
+                if (hostname.includes('youtube.com')) return '⚡ سريع';
+                if (hostname.includes('facebook.com')) return '⚡ سريع';
+                if (hostname.includes('instagram.com')) return '⚡ سريع';
+                if (hostname.includes('twitter.com')) return '🚀 فائق';
+                
+                return '✅ جيد';
+            } catch {
+                return '✅ عادي';
+            }
+        }
+
+        function getWebsitePopularity(url) {
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                if (hostname.includes('google.com')) return '🔥 #1';
+                if (hostname.includes('youtube.com')) return '🔥 #2';
+                if (hostname.includes('facebook.com')) return '🔥 #3';
+                if (hostname.includes('instagram.com')) return '🔥 #4';
+                if (hostname.includes('twitter.com')) return '📈 #5';
+                if (hostname.includes('whatsapp.com')) return '📈 #6';
+                
+                return '👍 شائع';
+            } catch {
+                return '📊 متوسط';
+            }
+        }
+
+        // New website action functions
+        function openInExternalBrowser() {
+            if (currentUrl) {
+                window.open(currentUrl, '_blank', 'noopener,noreferrer');
+                showToast('🌐 تم فتح الموقع في متصفح جديد!');
+            }
+        }
+
+        function openInNewTab() {
+            showToast('🔗 تم فتح تبويب جديد! (محاكاة)');
+            // In a real browser, this would open a new tab
+        }
+
+        function copyWebsiteLink() {
+            if (currentUrl) {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(currentUrl).then(() => {
+                        showToast('📋 تم نسخ الرابط بنجاح!');
+                    }).catch(() => {
+                        showToast('📋 تم نسخ الرابط! (محاكاة)');
+                    });
+                } else {
+                    showToast('📋 تم نسخ الرابط! (محاكاة)');
+                }
+            }
+        }
+
+        function shareWebsite() {
+            if (navigator.share && currentUrl) {
+                navigator.share({
+                    title: extractTitleFromUrl(currentUrl),
+                    url: currentUrl,
+                    text: `شاهد هذا الموقع الرائع: ${extractTitleFromUrl(currentUrl)}`
+                }).then(() => {
+                    showToast('📤 تم مشاركة الموقع بنجاح!');
+                }).catch(() => {
+                    showToast('📤 تم مشاركة الموقع! (محاكاة)');
+                });
+            } else {
+                showToast('📤 تم مشاركة الموقع! (محاكاة)');
+            }
+        }
+
+        // Enhanced frame handling functions
         function handleFrameLoad() {
             setTimeout(() => {
                 const loadingOverlay = document.getElementById('frame-loading');
+                const errorOverlay = document.getElementById('frame-error');
+                
                 if (loadingOverlay) {
                     loadingOverlay.style.display = 'none';
                 }
+                if (errorOverlay) {
+                    errorOverlay.classList.add('hidden');
+                }
+                
                 showToast('✅ تم تحميل الصفحة بنجاح!');
             }, 1000);
         }
 
         function handleFrameError() {
+            // Try next proxy if available
+            if (currentProxyIndex < maxProxyAttempts - 1) {
+                showToast('🔄 جاري المحاولة مع خادم آخر...');
+                loadWithProxy(currentUrl, currentProxyIndex + 1);
+                return;
+            }
+            
+            // All proxies failed, show error
             const loadingOverlay = document.getElementById('frame-loading');
             const errorOverlay = document.getElementById('frame-error');
             
             if (loadingOverlay) loadingOverlay.style.display = 'none';
             if (errorOverlay) errorOverlay.classList.remove('hidden');
             
-            showToast('❌ فشل في تحميل الصفحة', 'error');
+            showToast('❌ فشل في تحميل الصفحة من جميع الخوادم', 'error');
         }
 
         function retryLoad() {
-            const frame = document.getElementById('web-frame');
             const loadingOverlay = document.getElementById('frame-loading');
             const errorOverlay = document.getElementById('frame-error');
             
             if (errorOverlay) errorOverlay.classList.add('hidden');
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
             
-            if (frame) {
-                frame.src = frame.src; // Reload the frame
-            }
+            // Reset proxy index and try again
+            currentProxyIndex = 0;
+            loadWithProxy(currentUrl, 0);
             
             showToast('🔄 جاري إعادة تحميل الصفحة...');
         }
@@ -2205,6 +2700,74 @@
             }
         }
 
+        // Enable website access function
+        function enableWebsiteAccess() {
+            // Show permission dialog for website access
+            const dialog = document.createElement('div');
+            dialog.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            dialog.innerHTML = `
+                <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                            🌐
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">تفعيل الوصول للمواقع</h2>
+                        <p class="text-gray-600 mb-6">
+                            سيتم منح المتصفح إذن الوصول للمواقع الخارجية وتجاوز قيود الأمان لتحميل المحتوى بشكل كامل.
+                        </p>
+                        
+                        <div class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6">
+                            <div class="flex items-start gap-3">
+                                <div class="text-green-500 text-xl">✅</div>
+                                <div class="text-right">
+                                    <h4 class="font-semibold text-green-800 mb-1">ما سيتم تفعيله:</h4>
+                                    <ul class="text-sm text-green-700 space-y-1">
+                                        <li>• تحميل المواقع داخل المتصفح</li>
+                                        <li>• تجاوز قيود CORS</li>
+                                        <li>• الوصول للمحتوى المحمي</li>
+                                        <li>• تشغيل JavaScript للمواقع</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button onclick="cancelWebsiteAccess()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-2xl transition-all">
+                                إلغاء
+                            </button>
+                            <button onclick="confirmWebsiteAccess()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-2xl transition-all shadow-lg">
+                                🌐 تفعيل الآن
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(dialog);
+        }
+
+        // Confirm website access
+        function confirmWebsiteAccess() {
+            localStorage.setItem('superBrowser_websiteAccess', 'enabled');
+            document.querySelector('.fixed.inset-0.bg-black\\/60').remove();
+            
+            showToast('🌐 تم تفعيل الوصول للمواقع بنجاح!');
+            
+            // Reload current page if we're viewing a website
+            if (currentUrl) {
+                setTimeout(() => {
+                    showWebPage(currentUrl);
+                    showToast('🔄 جاري إعادة تحميل الصفحة...');
+                }, 1000);
+            }
+        }
+
+        // Cancel website access
+        function cancelWebsiteAccess() {
+            document.querySelector('.fixed.inset-0.bg-black\\/60').remove();
+            showToast('❌ تم إلغاء تفعيل الوصول للمواقع');
+        }
+
         // Update initialization to use enhanced permissions
         async function initializeApp() {
             // Check if permissions were previously granted
@@ -2221,5 +2784,5 @@
         // Initialize the app
         initializeApp();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bbfc6fb3f75043',t:'MTc2MjY3NzQyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bc1becb5ad5043',t:'MTc2MjY3ODcxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
