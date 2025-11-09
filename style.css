@@ -1,0 +1,21 @@
+body {
+  font-family: "Cairo", sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  text-align: center;
+}
+header { margin: 20px; }
+button {
+  margin: 5px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  background: #5eead4;
+  color: #0f172a;
+  cursor: pointer;
+}
+canvas {
+  background: #1e293b;
+  border: 2px solid #5eead4;
+  margin-top: 20px;
+}
