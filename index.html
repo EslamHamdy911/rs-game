@@ -428,6 +428,126 @@
        <h3 class="font-bold mb-1">الأوامر الصوتية</h3>
        <p class="text-sm opacity-90">تحكم بالصوت في المتصفح</p>
       </div>
+     </div><!-- News and Weather Section -->
+     <div class="mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"><!-- Live News -->
+       <div class="bg-gradient-to-br from-red-500 to-orange-600 rounded-2xl p-4 text-white">
+        <div class="flex items-center justify-between mb-3">
+         <h3 class="font-bold text-lg flex items-center gap-2">📰 الأخبار العاجلة</h3>
+         <div class="bg-white/20 px-2 py-1 rounded-full text-xs font-medium animate-pulse">
+          مباشر
+         </div>
+        </div>
+        <div id="news-container" class="space-y-2">
+         <div class="bg-white/10 rounded-lg p-3 cursor-pointer hover:bg-white/20 transition-all" onclick="openNewsDetails(0)">
+          <div class="text-sm font-medium mb-1">
+           🔥 عاجل: تطورات تقنية جديدة في الذكاء الاصطناعي
+          </div>
+          <div class="text-xs opacity-80">
+           منذ 5 دقائق • تقنية
+          </div>
+         </div>
+         <div class="bg-white/10 rounded-lg p-3 cursor-pointer hover:bg-white/20 transition-all" onclick="openNewsDetails(1)">
+          <div class="text-sm font-medium mb-1">
+           ⚽ الرياضة: نتائج المباريات اليوم
+          </div>
+          <div class="text-xs opacity-80">
+           منذ 15 دقيقة • رياضة
+          </div>
+         </div>
+         <div class="bg-white/10 rounded-lg p-3 cursor-pointer hover:bg-white/20 transition-all" onclick="openNewsDetails(2)">
+          <div class="text-sm font-medium mb-1">
+           💰 الاقتصاد: ارتفاع أسعار الذهب عالمياً
+          </div>
+          <div class="text-xs opacity-80">
+           منذ 30 دقيقة • اقتصاد
+          </div>
+         </div>
+        </div><button onclick="openAllNews()" class="w-full mt-3 bg-white/20 hover:bg-white/30 py-2 rounded-lg text-sm font-medium transition-all"> عرض جميع الأخبار </button>
+       </div><!-- Live Weather -->
+       <div class="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl p-4 text-white">
+        <div class="flex items-center justify-between mb-3">
+         <h3 class="font-bold text-lg flex items-center gap-2">🌤️ الطقس الآن</h3>
+         <div class="bg-white/20 px-2 py-1 rounded-full text-xs font-medium" id="weather-time">
+          12:30 م
+         </div>
+        </div>
+        <div id="weather-container">
+         <div class="flex items-center justify-between mb-4">
+          <div>
+           <div class="text-3xl font-bold" id="temperature">
+            28°
+           </div>
+           <div class="text-sm opacity-80" id="location">
+            الرياض، السعودية
+           </div>
+          </div>
+          <div class="text-6xl" id="weather-icon">
+           ☀️
+          </div>
+         </div>
+         <div class="bg-white/10 rounded-lg p-3 mb-3">
+          <div class="flex justify-between items-center mb-2"><span class="text-sm">الحالة:</span> <span class="text-sm font-medium" id="weather-condition">مشمس</span>
+          </div>
+          <div class="flex justify-between items-center mb-2"><span class="text-sm">الرطوبة:</span> <span class="text-sm font-medium" id="humidity">45%</span>
+          </div>
+          <div class="flex justify-between items-center"><span class="text-sm">الرياح:</span> <span class="text-sm font-medium" id="wind-speed">15 كم/س</span>
+          </div>
+         </div>
+         <div class="grid grid-cols-3 gap-2">
+          <div class="bg-white/10 rounded-lg p-2 text-center">
+           <div class="text-xs opacity-80">
+            غداً
+           </div>
+           <div class="text-lg">
+            🌤️
+           </div>
+           <div class="text-sm font-medium">
+            26°
+           </div>
+          </div>
+          <div class="bg-white/10 rounded-lg p-2 text-center">
+           <div class="text-xs opacity-80">
+            الأحد
+           </div>
+           <div class="text-lg">
+            ⛅
+           </div>
+           <div class="text-sm font-medium">
+            24°
+           </div>
+          </div>
+          <div class="bg-white/10 rounded-lg p-2 text-center">
+           <div class="text-xs opacity-80">
+            الاثنين
+           </div>
+           <div class="text-lg">
+            🌧️
+           </div>
+           <div class="text-sm font-medium">
+            22°
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Motivational Messages -->
+     <div class="mb-6">
+      <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-4 text-white text-center">
+       <div class="text-2xl mb-2">
+        ✨
+       </div>
+       <div class="font-bold text-lg mb-2" id="motivational-title">
+        رسالة اليوم
+       </div>
+       <div class="text-sm opacity-90" id="motivational-message">
+        "النجاح ليس نهاية المطاف، والفشل ليس قاتلاً، إنما الشجاعة للمتابعة هي التي تهم."
+       </div>
+       <div class="text-xs opacity-70 mt-2" id="motivational-author">
+        - ونستون تشرشل
+       </div><button onclick="getNewMotivationalMessage()" class="mt-3 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-all"> رسالة جديدة 🔄 </button>
+      </div>
      </div><!-- Popular Sites -->
      <div class="mb-6">
       <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">🌟 المواقع الشائعة</h2>
@@ -722,38 +842,115 @@
             document.body.appendChild(dialog);
         }
 
-        // Quick accept all permissions
+        // Quick accept all permissions with enhanced system simulation
         function quickAcceptAll() {
             permissionsGranted = true;
             localStorage.setItem('superBrowser_permissions', 'granted');
             localStorage.setItem('superBrowser_defaultBrowser', 'true');
             localStorage.setItem('superBrowser_websiteAccess', 'enabled');
+            localStorage.setItem('superBrowser_allPermissions', 'true');
             document.querySelector('.fixed.inset-0.bg-black\\/60').remove();
             
-            showToast('⚡ تم قبول جميع الأذونات فوراً!');
+            // Show comprehensive permission granting process
+            showToast('⚡ بدء تفعيل جميع الأذونات...');
             
-            // Simulate all permissions being granted quickly
+            // Simulate Android system permission dialogs
             setTimeout(() => {
-                showToast('🌐 تم تفعيل الوصول للمواقع الخارجية');
-            }, 300);
+                showSystemPermissionDialog('INTERNET', '🌐 السماح للتطبيق بالوصول للإنترنت؟', () => {
+                    showToast('✅ تم منح إذن الإنترنت');
+                    
+                    setTimeout(() => {
+                        showSystemPermissionDialog('SET_DEFAULT_BROWSER', '🏠 تعيين كمتصفح افتراضي؟', () => {
+                            showToast('✅ تم تعيين المتصفح الافتراضي');
+                            
+                            setTimeout(() => {
+                                showSystemPermissionDialog('STORAGE', '💾 السماح بالوصول للتخزين؟', () => {
+                                    showToast('✅ تم منح أذونات التخزين');
+                                    
+                                    setTimeout(() => {
+                                        showSystemPermissionDialog('MICROPHONE', '🎤 السماح بالوصول للميكروفون؟', () => {
+                                            showToast('✅ تم منح إذن الميكروفون');
+                                            
+                                            setTimeout(() => {
+                                                showSystemPermissionDialog('LOCATION', '📍 السماح بالوصول للموقع؟', () => {
+                                                    showToast('✅ تم منح إذن الموقع');
+                                                    
+                                                    setTimeout(() => {
+                                                        showSystemPermissionDialog('CAMERA', '📷 السماح بالوصول للكاميرا؟', () => {
+                                                            showToast('✅ تم منح إذن الكاميرا');
+                                                            
+                                                            setTimeout(() => {
+                                                                showToast('🎉 تم منح جميع الأذونات بنجاح!');
+                                                                setTimeout(() => {
+                                                                    showToast('🚀 المتصفح جاهز للعمل بكامل قوته!');
+                                                                    continueAppInitialization();
+                                                                }, 1000);
+                                                            }, 800);
+                                                        });
+                                                    }, 800);
+                                                });
+                                            }, 800);
+                                        });
+                                    }, 800);
+                                });
+                            }, 800);
+                        });
+                    }, 800);
+                });
+            }, 500);
+        }
+
+        // Simulate Android system permission dialog
+        function showSystemPermissionDialog(permission, message, onAccept) {
+            const dialog = document.createElement('div');
+            dialog.className = 'fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center p-4';
+            dialog.innerHTML = `
+                <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl animate-pulse">
+                    <div class="p-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white text-xl">
+                                🛡️
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800">إذن النظام</h3>
+                                <p class="text-sm text-gray-600">Android System</p>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-800 mb-6 text-center">${message}</p>
+                        
+                        <div class="flex gap-3">
+                            <button onclick="denySystemPermission()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium transition-all">
+                                رفض
+                            </button>
+                            <button onclick="acceptSystemPermission()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-medium transition-all">
+                                السماح
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
             
+            document.body.appendChild(dialog);
+            
+            // Auto-accept after 2 seconds to simulate user clicking
             setTimeout(() => {
-                showToast('🏠 تم تعيين المتصفح كافتراضي');
-            }, 600);
+                if (document.body.contains(dialog)) {
+                    dialog.remove();
+                    onAccept();
+                }
+            }, 2000);
             
-            setTimeout(() => {
-                showToast('💾 تم تفعيل حفظ الملفات والتحميل');
-            }, 900);
+            // Add click handlers
+            window.acceptSystemPermission = () => {
+                dialog.remove();
+                onAccept();
+            };
             
-            setTimeout(() => {
-                showToast('🎤 تم تفعيل البحث الصوتي والأوامر');
-            }, 1200);
-            
-            setTimeout(() => {
-                showToast('🚀 جميع الميزات مُفعّلة! المتصفح جاهز للعمل بكامل قوته');
-            }, 1500);
-            
-            continueAppInitialization();
+            window.denySystemPermission = () => {
+                dialog.remove();
+                showToast('❌ تم رفض الإذن');
+            };
         }
 
         // Accept permissions
@@ -2781,8 +2978,282 @@
             continueAppInitialization();
         }
 
+        // News and Weather Data
+        const newsData = [
+            {
+                title: "🔥 عاجل: تطورات تقنية جديدة في الذكاء الاصطناعي",
+                summary: "شركات التقنية الكبرى تعلن عن اختراقات جديدة في مجال الذكاء الاصطناعي التوليدي",
+                category: "تقنية",
+                time: "منذ 5 دقائق",
+                content: "أعلنت عدة شركات تقنية رائدة اليوم عن تطورات مهمة في مجال الذكاء الاصطناعي، حيث تم تطوير نماذج جديدة قادرة على فهم السياق بشكل أفضل وتقديم إجابات أكثر دقة. هذه التطورات ستؤثر على مختلف الصناعات من التعليم إلى الطب والتمويل."
+            },
+            {
+                title: "⚽ الرياضة: نتائج المباريات اليوم",
+                summary: "نتائج مثيرة في الدوريات الأوروبية والمحلية مع أهداف رائعة",
+                category: "رياضة",
+                time: "منذ 15 دقيقة",
+                content: "شهدت المباريات اليوم إثارة كبيرة في مختلف الدوريات، حيث حقق الفريق المحلي فوزاً مهماً بنتيجة 3-1، بينما انتهت المباراة الأوروبية بالتعادل 2-2 في مباراة مثيرة شهدت أهدافاً رائعة من كلا الفريقين."
+            },
+            {
+                title: "💰 الاقتصاد: ارتفاع أسعار الذهب عالمياً",
+                summary: "الذهب يسجل أعلى مستوياته هذا العام وسط توقعات بمزيد من الارتفاع",
+                category: "اقتصاد",
+                time: "منذ 30 دقيقة",
+                content: "سجلت أسعار الذهب ارتفاعاً ملحوظاً اليوم لتصل إلى أعلى مستوياتها هذا العام، حيث بلغ سعر الأونصة 2,050 دولار. يعزو المحللون هذا الارتفاع إلى التوترات الجيوسياسية والتضخم المستمر في الاقتصادات الكبرى."
+            },
+            {
+                title: "🌍 البيئة: مبادرات جديدة لمكافحة التغير المناخي",
+                summary: "دول عديدة تعلن عن خطط طموحة للوصول للحياد الكربوني",
+                category: "بيئة",
+                time: "منذ 45 دقيقة",
+                content: "أعلنت عدة دول عن مبادرات جديدة لمكافحة التغير المناخي، تشمل استثمارات ضخمة في الطاقة المتجددة وتقنيات احتجاز الكربون. هذه المبادرات تهدف للوصول للحياد الكربوني بحلول 2050."
+            },
+            {
+                title: "🏥 الصحة: اكتشاف علاج جديد واعد",
+                summary: "الباحثون يطورون علاجاً مبتكراً قد يغير مسار الطب الحديث",
+                category: "صحة",
+                time: "منذ ساعة",
+                content: "توصل فريق من الباحثين الدوليين إلى تطوير علاج جديد يعتمد على تقنية الجينات، والذي أظهر نتائج واعدة في التجارب الأولية. هذا العلاج قد يفتح آفاقاً جديدة في علاج الأمراض المستعصية."
+            }
+        ];
+
+        const motivationalMessages = [
+            {
+                title: "رسالة الإلهام",
+                message: "النجاح ليس نهاية المطاف، والفشل ليس قاتلاً، إنما الشجاعة للمتابعة هي التي تهم.",
+                author: "ونستون تشرشل"
+            },
+            {
+                title: "قوة الإرادة",
+                message: "الطريق إلى النجاح مليء بالتحديات، لكن كل خطوة تقربك من هدفك تستحق العناء.",
+                author: "مجهول"
+            },
+            {
+                title: "التفاؤل والأمل",
+                message: "كن مثل الشمس، أشرق حتى لو كانت السحب تحجبك، فضوؤك سيخترق الظلام.",
+                author: "حكمة عربية"
+            },
+            {
+                title: "قوة التغيير",
+                message: "لا تنتظر الفرصة المثالية، اصنعها بنفسك. كل يوم جديد هو فرصة للبداية من جديد.",
+                author: "مارك توين"
+            },
+            {
+                title: "الإبداع والابتكار",
+                message: "الخيال أهم من المعرفة، فالمعرفة محدودة أما الخيال فيحيط بالعالم كله.",
+                author: "ألبرت أينشتاين"
+            },
+            {
+                title: "المثابرة والصبر",
+                message: "النجاح هو القدرة على الانتقال من فشل إلى فشل دون فقدان الحماس.",
+                author: "ونستون تشرشل"
+            },
+            {
+                title: "قوة الأحلام",
+                message: "احلم كبيراً واعمل بجد، فالأحلام الكبيرة تحتاج إلى عمل كبير لتصبح حقيقة.",
+                author: "والت ديزني"
+            },
+            {
+                title: "التعلم المستمر",
+                message: "التعلم رحلة لا تنتهي، وكل يوم تتعلم فيه شيئاً جديداً هو يوم لم تضيعه.",
+                author: "نيلسون مانديلا"
+            }
+        ];
+
+        // Weather data simulation
+        const weatherData = {
+            current: {
+                temperature: 28,
+                condition: "مشمس",
+                icon: "☀️",
+                humidity: 45,
+                windSpeed: 15,
+                location: "الرياض، السعودية"
+            },
+            forecast: [
+                { day: "غداً", icon: "🌤️", temp: 26 },
+                { day: "الأحد", icon: "⛅", temp: 24 },
+                { day: "الاثنين", icon: "🌧️", temp: 22 }
+            ]
+        };
+
+        // News functions
+        function openNewsDetails(index) {
+            const news = newsData[index];
+            if (!news) return;
+            
+            const dialog = document.createElement('div');
+            dialog.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            dialog.innerHTML = `
+                <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-xl flex items-center justify-center text-white text-xl">
+                                    📰
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">${news.category}</h3>
+                                    <p class="text-sm text-gray-600">${news.time}</p>
+                                </div>
+                            </div>
+                            <button onclick="closeNewsDialog()" class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors">
+                                ✕
+                            </button>
+                        </div>
+                        
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">${news.title}</h2>
+                        
+                        <div class="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-2xl p-4 mb-4">
+                            <h4 class="font-semibold text-red-800 mb-2">📋 ملخص الخبر</h4>
+                            <p class="text-red-700">${news.summary}</p>
+                        </div>
+                        
+                        <div class="prose max-w-none">
+                            <p class="text-gray-700 leading-relaxed">${news.content}</p>
+                        </div>
+                        
+                        <div class="flex gap-3 mt-6">
+                            <button onclick="shareNews(${index})" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-xl font-medium transition-all">
+                                📤 مشاركة
+                            </button>
+                            <button onclick="saveNews(${index})" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium transition-all">
+                                💾 حفظ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(dialog);
+        }
+
+        function closeNewsDialog() {
+            const dialog = document.querySelector('.fixed.inset-0.bg-black\\/60');
+            if (dialog) dialog.remove();
+        }
+
+        function shareNews(index) {
+            const news = newsData[index];
+            if (navigator.share) {
+                navigator.share({
+                    title: news.title,
+                    text: news.summary,
+                    url: window.location.href
+                });
+            } else {
+                showToast('📤 تم نسخ رابط الخبر للمشاركة!');
+            }
+            closeNewsDialog();
+        }
+
+        function saveNews(index) {
+            const news = newsData[index];
+            showToast('💾 تم حفظ الخبر في المفضلة!');
+            closeNewsDialog();
+        }
+
+        function openAllNews() {
+            const dialog = document.createElement('div');
+            dialog.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            dialog.innerHTML = `
+                <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                📰 جميع الأخبار
+                                <span class="bg-red-100 text-red-600 text-sm px-3 py-1 rounded-full">مباشر</span>
+                            </h2>
+                            <button onclick="closeNewsDialog()" class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors">
+                                ✕
+                            </button>
+                        </div>
+                        
+                        <div class="grid gap-4">
+                            ${newsData.map((news, index) => `
+                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4 hover:shadow-lg transition-all cursor-pointer" onclick="openNewsDetails(${index})">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-600 rounded-xl flex items-center justify-center text-white text-2xl flex-shrink-0">
+                                            📰
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">${news.category}</span>
+                                                <span class="text-xs text-gray-500">${news.time}</span>
+                                            </div>
+                                            <h3 class="font-bold text-gray-800 mb-2">${news.title}</h3>
+                                            <p class="text-gray-600 text-sm">${news.summary}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(dialog);
+        }
+
+        // Weather functions
+        function updateWeatherDisplay() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ar-SA', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            
+            document.getElementById('weather-time').textContent = timeString;
+            document.getElementById('temperature').textContent = `${weatherData.current.temperature}°`;
+            document.getElementById('location').textContent = weatherData.current.location;
+            document.getElementById('weather-icon').textContent = weatherData.current.icon;
+            document.getElementById('weather-condition').textContent = weatherData.current.condition;
+            document.getElementById('humidity').textContent = `${weatherData.current.humidity}%`;
+            document.getElementById('wind-speed').textContent = `${weatherData.current.windSpeed} كم/س`;
+        }
+
+        // Motivational message functions
+        function getNewMotivationalMessage() {
+            const randomMessage = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+            
+            document.getElementById('motivational-title').textContent = randomMessage.title;
+            document.getElementById('motivational-message').textContent = randomMessage.message;
+            document.getElementById('motivational-author').textContent = `- ${randomMessage.author}`;
+            
+            showToast('✨ رسالة جديدة مُلهمة!');
+        }
+
+        // Auto-update functions
+        function startAutoUpdates() {
+            // Update weather every 5 minutes
+            setInterval(updateWeatherDisplay, 5 * 60 * 1000);
+            
+            // Update news every 10 minutes
+            setInterval(() => {
+                // Simulate new news
+                const newsContainer = document.getElementById('news-container');
+                if (newsContainer) {
+                    // Add animation to show "new" news
+                    newsContainer.classList.add('animate-pulse');
+                    setTimeout(() => {
+                        newsContainer.classList.remove('animate-pulse');
+                    }, 2000);
+                }
+            }, 10 * 60 * 1000);
+            
+            // Change motivational message every hour
+            setInterval(getNewMotivationalMessage, 60 * 60 * 1000);
+        }
+
         // Initialize the app
         initializeApp();
+        
+        // Start auto-updates when app is ready
+        setTimeout(() => {
+            updateWeatherDisplay();
+            startAutoUpdates();
+        }, 2000);
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bc1becb5ad5043',t:'MTc2MjY3ODcxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bc29e2524d5043',t:'MTc2MjY3OTI4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
