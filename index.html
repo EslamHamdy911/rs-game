@@ -3,7 +3,8 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>محمل الفيديوهات</title>
+  <title>محمل الفيديوهات</title><!-- Web App Manifest for Share Target -->
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogItin2YXYrdmF2YQg2KfZhNmB2YrYr9mK2YjZh9in2KoiLAogICJzaG9ydF9uYW1lIjogItin2YXYrdmF2YQg2KfZhNmB2YrYr9mK2YjZh9in2KoiLAogICJzdGFydF91cmwiOiAiLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgInRoZW1lX2NvbG9yIjogIiM2NjdlZWEiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiM2NjdlZWEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXhNakFpSUdobGFXZG9kRDBpTVRJd0lqNDhjbVZqZENCM2FXUjBhRDBpTVRJd0lpQm9aV2xuYUhROUlqRXlNQ0lpSUdacGJHdzlJaU0yTmpkbFpXRWlMejQ4ZEdWNGRDQjRQU0kyTUNJZ2VUMGlOakFpSUdacGJHdzlJaU0zWm1abVptWWlJR1p2Ym5RdGMybDZaVDBpTWpRaUlIUmxlSFF0WVc1amFHOXlQU0p0YVdSa2JHVWlQaUE4TDNSbGVIUStQQzl6ZG1jKyIsCiAgICAgICJzaXplcyI6ICIxMjB4MTIwIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdLAogICJzaGFyZV90YXJnZXQiOiB7CiAgICAiYWN0aW9uIjogIi8iLAogICAgIm1ldGhvZCI6ICJHRVQiLAogICAgInBhcmFtcyI6IHsKICAgICAgInRpdGxlIjogInRpdGxlIiwKICAgICAgInRleHQiOiAidGV4dCIsCiAgICAgICJ1cmwiOiAidXJsIgogICAgfQogIH0KfQ==">
   <script src="/_sdk/data_sdk.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -53,6 +54,15 @@
             transform: scale(0.98);
         }
         
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
         /* Mobile-first responsive design */
         @media (max-width: 640px) {
             .container-padding {
@@ -89,14 +99,42 @@
   <div style="height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px;">
    <div class="max-w-md mx-auto"><!-- Header -->
     <div class="text-center mb-6">
-     <h1 id="app-title" class="text-2xl font-bold text-white mb-2">محمل الفيديوهات</h1>
+     <div class="flex items-center justify-between mb-4">
+      <div></div>
+      <h1 id="app-title" class="text-2xl font-bold text-white">محمل الفيديوهات</h1><button id="share-btn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm p-2 rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center"> 🔗 </button>
+     </div>
      <p class="text-white/80 text-sm">أضف روابط الفيديوهات وحملها بسهولة</p>
     </div><!-- Smart Paste Tool -->
     <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-xl p-4 mb-4 text-white">
      <div class="flex items-center justify-between mb-3">
-      <h2 class="text-lg font-bold">🎯 أداة النسخ الذكية</h2><button id="smart-paste-btn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px] flex items-center gap-2"> 📋 نسخ من المتصفح </button>
+      <h2 class="text-lg font-bold">🎯 أداة النسخ الذكية</h2>
+      <div class="flex gap-2"><button id="smart-paste-btn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px] flex items-center gap-1"> 📋 نسخ </button> <button id="share-receive-btn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px] flex items-center gap-1"> 📱 استقبال </button>
+      </div>
      </div>
-     <p class="text-white/90 text-sm">انسخ عنوان الصفحة والرابط من المتصفح بلمسة واحدة، ثم الصق هنا!</p>
+     <p class="text-white/90 text-sm">انسخ من المتصفح أو شارك الرابط مباشرة من هاتفك إلى التطبيق!</p><!-- Share Target Instructions -->
+     <div id="share-instructions" class="mt-3 p-3 bg-white/10 rounded-lg text-sm hidden">
+      <div class="flex items-center gap-2 mb-2"><span class="text-lg">📲</span> <strong>كيفية المشاركة من المتصفح:</strong>
+      </div>
+      <ol class="list-decimal list-inside space-y-1 text-white/90">
+       <li>افتح الفيديو في المتصفح</li>
+       <li>اضغط زر "مشاركة" في المتصفح</li>
+       <li>اختر "محمل الفيديوهات" من القائمة</li>
+       <li>سيتم إضافة الفيديو تلقائياً!</li>
+      </ol>
+     </div>
+    </div><!-- Shared Content Alert -->
+    <div id="shared-content-alert" class="bg-green-500 rounded-xl shadow-xl p-4 mb-4 text-white hidden">
+     <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2"><span class="text-xl">🎉</span>
+       <h3 class="font-bold">تم استقبال محتوى مشارك!</h3>
+      </div><button id="dismiss-shared" class="text-white/80 hover:text-white">✕</button>
+     </div>
+     <div id="shared-content-preview" class="bg-white/20 rounded-lg p-3 mb-3">
+      <p id="shared-title" class="font-medium mb-1"></p>
+      <p id="shared-url" class="text-sm text-white/90 break-all"></p>
+     </div>
+     <div class="flex gap-2"><button id="add-shared-content" class="flex-1 bg-white text-green-600 font-bold py-2 px-4 rounded-lg hover:bg-white/90 transition-colors"> إضافة للقائمة </button> <button id="ignore-shared" class="bg-white/20 text-white py-2 px-4 rounded-lg hover:bg-white/30 transition-colors"> تجاهل </button>
+     </div>
     </div><!-- Add Video Form -->
     <div class="bg-white rounded-xl shadow-xl p-4 mb-4">
      <div class="flex items-center justify-between mb-3">
@@ -136,6 +174,7 @@
 
         let currentVideos = [];
         let recordCount = 0;
+        let sharedContent = null;
 
         // Data SDK Handler
         const dataHandler = {
@@ -147,8 +186,72 @@
             }
         };
 
+        // Check for shared content from URL parameters or Web Share Target
+        function checkForSharedContent() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const title = urlParams.get('title') || urlParams.get('text') || '';
+            const url = urlParams.get('url') || '';
+            
+            if (title || url) {
+                sharedContent = {
+                    title: title || 'فيديو مشارك',
+                    url: url || title // Sometimes URL comes in title parameter
+                };
+                
+                // Validate URL
+                try {
+                    if (sharedContent.url && !sharedContent.url.startsWith('http')) {
+                        // Try to extract URL from text
+                        const urlMatch = sharedContent.url.match(/(https?:\/\/[^\s]+)/);
+                        if (urlMatch) {
+                            sharedContent.url = urlMatch[1];
+                        }
+                    }
+                    new URL(sharedContent.url);
+                    showSharedContentAlert();
+                } catch (error) {
+                    // If URL is invalid, try to use it as title
+                    if (url) {
+                        sharedContent.title = url;
+                        sharedContent.url = '';
+                    }
+                    if (sharedContent.title) {
+                        showSharedContentAlert();
+                    }
+                }
+                
+                // Clean URL parameters
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        }
+
+        // Show shared content alert
+        function showSharedContentAlert() {
+            if (!sharedContent) return;
+            
+            const alert = document.getElementById('shared-content-alert');
+            const titleEl = document.getElementById('shared-title');
+            const urlEl = document.getElementById('shared-url');
+            
+            titleEl.textContent = sharedContent.title;
+            urlEl.textContent = sharedContent.url || 'لا يوجد رابط';
+            
+            alert.classList.remove('hidden');
+            alert.classList.add('pulse-animation');
+            
+            // Auto-scroll to alert
+            setTimeout(() => {
+                alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
         // Initialize SDKs
         async function initializeApp() {
+            // Check for shared content on page load
+            checkForSharedContent();
+            
             // Initialize Data SDK
             if (window.dataSdk) {
                 const initResult = await window.dataSdk.init(dataHandler);
@@ -262,6 +365,153 @@
             }
         }
 
+        // Shared Content Handlers
+        document.getElementById('add-shared-content').addEventListener('click', async () => {
+            if (!sharedContent) return;
+            
+            // Fill form with shared content
+            document.getElementById('video-title').value = sharedContent.title;
+            document.getElementById('video-url').value = sharedContent.url;
+            
+            // Hide alert
+            document.getElementById('shared-content-alert').classList.add('hidden');
+            
+            // Auto-submit if both title and URL are present
+            if (sharedContent.title && sharedContent.url) {
+                try {
+                    new URL(sharedContent.url);
+                    document.getElementById('add-video-form').dispatchEvent(new Event('submit'));
+                } catch (error) {
+                    showToast('تم ملء النموذج، يرجى التحقق من الرابط وإضافة الفيديو يدوياً');
+                    document.getElementById('video-url').focus();
+                }
+            } else {
+                showToast('تم ملء النموذج، يرجى إكمال البيانات المفقودة');
+                if (!sharedContent.title) {
+                    document.getElementById('video-title').focus();
+                } else {
+                    document.getElementById('video-url').focus();
+                }
+            }
+            
+            sharedContent = null;
+        });
+
+        document.getElementById('ignore-shared').addEventListener('click', () => {
+            document.getElementById('shared-content-alert').classList.add('hidden');
+            sharedContent = null;
+        });
+
+        document.getElementById('dismiss-shared').addEventListener('click', () => {
+            document.getElementById('shared-content-alert').classList.add('hidden');
+            sharedContent = null;
+        });
+
+        // Share Receive Button Handler
+        document.getElementById('share-receive-btn').addEventListener('click', () => {
+            const instructions = document.getElementById('share-instructions');
+            if (instructions.classList.contains('hidden')) {
+                instructions.classList.remove('hidden');
+                document.getElementById('share-receive-btn').innerHTML = '📱 إخفاء';
+            } else {
+                instructions.classList.add('hidden');
+                document.getElementById('share-receive-btn').innerHTML = '📱 استقبال';
+            }
+        });
+
+        // Share Button Handler
+        document.getElementById('share-btn').addEventListener('click', async () => {
+            const shareData = {
+                title: 'محمل الفيديوهات - أداة رائعة لحفظ روابط الفيديوهات',
+                text: 'جرب هذا التطبيق الرائع لحفظ وتنظيم روابط الفيديوهات بسهولة! 🎬✨',
+                url: window.location.href
+            };
+
+            try {
+                // Check if Web Share API is supported
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                    showToast('تم فتح نافذة المشاركة! 📤');
+                } else {
+                    // Fallback: Copy to clipboard
+                    const shareText = `${shareData.title}\n${shareData.text}\n${shareData.url}`;
+                    await navigator.clipboard.writeText(shareText);
+                    showToast('تم نسخ رابط التطبيق للحافظة! يمكنك مشاركته الآن 📋');
+                }
+            } catch (error) {
+                // Manual sharing options
+                showShareOptions();
+            }
+        });
+
+        // Show manual share options
+        function showShareOptions() {
+            const shareText = `محمل الفيديوهات - أداة رائعة لحفظ روابط الفيديوهات\nجرب هذا التطبيق الرائع! 🎬✨\n${window.location.href}`;
+            
+            // Create share modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-sm w-full">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">مشاركة التطبيق 🔗</h3>
+                    <div class="space-y-3">
+                        <button onclick="shareViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                            📱 مشاركة عبر واتساب
+                        </button>
+                        <button onclick="shareViaTelegram()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                            ✈️ مشاركة عبر تليجرام
+                        </button>
+                        <button onclick="copyShareLink()" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                            📋 نسخ الرابط
+                        </button>
+                        <button onclick="closeShareModal()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 px-4 rounded-lg transition-colors">
+                            إلغاء
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Add global functions for share options
+            window.shareViaWhatsApp = () => {
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+                window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+                closeShareModal();
+            };
+            
+            window.shareViaTelegram = () => {
+                const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('محمل الفيديوهات - أداة رائعة لحفظ روابط الفيديوهات 🎬✨')}`;
+                window.open(telegramUrl, '_blank', 'noopener,noreferrer');
+                closeShareModal();
+            };
+            
+            window.copyShareLink = async () => {
+                try {
+                    await navigator.clipboard.writeText(shareText);
+                    showToast('تم نسخ رابط التطبيق! 📋');
+                } catch (error) {
+                    showToast('فشل في النسخ، يرجى النسخ يدوياً', 'error');
+                }
+                closeShareModal();
+            };
+            
+            window.closeShareModal = () => {
+                modal.remove();
+                delete window.shareViaWhatsApp;
+                delete window.shareViaTelegram;
+                delete window.copyShareLink;
+                delete window.closeShareModal;
+            };
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeShareModal();
+                }
+            });
+        }
+
         // Smart Paste Tool Handler
         document.getElementById('smart-paste-btn').addEventListener('click', async () => {
             try {
@@ -276,7 +526,7 @@
                 // Show instructions
                 const smartPasteBtn = document.getElementById('smart-paste-btn');
                 const originalText = smartPasteBtn.innerHTML;
-                smartPasteBtn.innerHTML = '✅ تم النسخ - اذهب للمتصفح';
+                smartPasteBtn.innerHTML = '✅ تم النسخ';
                 setTimeout(() => {
                     smartPasteBtn.innerHTML = originalText;
                 }, 3000);
@@ -392,8 +642,6 @@
         document.getElementById('add-video-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            console.log('Form submitted'); // Debug log
-            
             if (recordCount >= 999) {
                 showToast('تم الوصول للحد الأقصى من الفيديوهات (999). يرجى حذف بعض الفيديوهات أولاً.', 'error');
                 return;
@@ -404,8 +652,6 @@
             const urlInput = document.getElementById('video-url');
             const title = titleInput.value.trim();
             const url = urlInput.value.trim();
-
-            console.log('Title:', title, 'URL:', url); // Debug log
 
             if (!title || !url) {
                 showToast('يرجى ملء جميع الحقول', 'error');
@@ -439,26 +685,20 @@
                     status: 'ready'
                 };
 
-                console.log('Creating video data:', videoData); // Debug log
-
                 if (window.dataSdk) {
                     const result = await window.dataSdk.create(videoData);
-                    console.log('Create result:', result); // Debug log
                     
                     if (result.isOk) {
-                        showToast('تم إضافة الفيديو بنجاح!');
+                        showToast('تم إضافة الفيديو بنجاح! 🎉');
                         titleInput.value = '';
                         urlInput.value = '';
                     } else {
-                        console.error('Create failed:', result.error);
                         showToast('فشل في إضافة الفيديو: ' + (result.error?.message || 'خطأ غير معروف'), 'error');
                     }
                 } else {
-                    console.error('Data SDK not available');
                     showToast('خدمة حفظ البيانات غير متاحة', 'error');
                 }
             } catch (error) {
-                console.error('Error adding video:', error);
                 showToast('حدث خطأ أثناء إضافة الفيديو: ' + error.message, 'error');
             } finally {
                 // Reset loading state
@@ -561,7 +801,7 @@
                 link.click();
                 document.body.removeChild(link);
                 
-                showToast('تم بدء التحميل!');
+                showToast('تم بدء التحميل! 📥');
             } catch (error) {
                 showToast('فشل في تحميل الفيديو', 'error');
             }
@@ -651,5 +891,5 @@
         // Initialize app when page loads
         initializeApp();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bb8aeda4de5043',t:'MTc2MjY3Mjc3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bba2a166845043',t:'MTc2MjY3Mzc0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
