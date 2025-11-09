@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl" style="height: 100%;">
  <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>محمل الفيديوهات</title>
   <script src="/_sdk/data_sdk.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
@@ -25,17 +25,20 @@
             position: fixed;
             top: 20px;
             right: 20px;
+            left: 20px;
             background: #10b981;
             color: white;
-            padding: 12px 20px;
+            padding: 12px 16px;
             border-radius: 8px;
             z-index: 1000;
-            transform: translateX(100%);
+            transform: translateY(-100px);
             transition: transform 0.3s ease;
+            text-align: center;
+            font-size: 14px;
         }
         
         .toast.show {
-            transform: translateX(0);
+            transform: translateY(0);
         }
         
         .toast.error {
@@ -46,45 +49,77 @@
             transition: all 0.2s ease;
         }
         
-        .video-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        .video-item:active {
+            transform: scale(0.98);
         }
         
-        .download-progress {
-            width: 0%;
-            transition: width 0.3s ease;
+        /* Mobile-first responsive design */
+        @media (max-width: 640px) {
+            .container-padding {
+                padding: 12px;
+            }
+            
+            .card-padding {
+                padding: 16px;
+            }
+            
+            .button-text {
+                font-size: 14px;
+            }
+        }
+        
+        /* Touch-friendly buttons */
+        button {
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+        
+        input {
+            min-height: 44px;
+        }
+        
+        /* Prevent zoom on input focus */
+        input[type="text"], input[type="url"] {
+            font-size: 16px;
         }
     </style>
   <style>@view-transition { navigation: auto; }</style>
  </head>
  <body style="height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" class="rtl">
-  <div style="height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px;">
-   <div class="max-w-4xl mx-auto"><!-- Header -->
-    <div class="text-center mb-8">
-     <h1 id="app-title" class="text-4xl font-bold text-white mb-2">محمل الفيديوهات</h1>
-     <p class="text-white/80 text-lg">أضف روابط الفيديوهات وحملها بسهولة</p>
+  <div style="height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px;">
+   <div class="max-w-md mx-auto"><!-- Header -->
+    <div class="text-center mb-6">
+     <h1 id="app-title" class="text-2xl font-bold text-white mb-2">محمل الفيديوهات</h1>
+     <p class="text-white/80 text-sm">أضف روابط الفيديوهات وحملها بسهولة</p>
+    </div><!-- Smart Paste Tool -->
+    <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-xl p-4 mb-4 text-white">
+     <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-bold">🎯 أداة النسخ الذكية</h2><button id="smart-paste-btn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px] flex items-center gap-2"> 📋 نسخ من المتصفح </button>
+     </div>
+     <p class="text-white/90 text-sm">انسخ عنوان الصفحة والرابط من المتصفح بلمسة واحدة، ثم الصق هنا!</p>
     </div><!-- Add Video Form -->
-    <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
-     <h2 class="text-2xl font-bold text-gray-800 mb-4">إضافة فيديو جديد</h2>
-     <form id="add-video-form" class="space-y-4">
-      <div><label for="video-title" class="block text-sm font-medium text-gray-700 mb-2">عنوان الفيديو</label> <input type="text" id="video-title" name="title" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="أدخل عنوان الفيديو">
+    <div class="bg-white rounded-xl shadow-xl p-4 mb-4">
+     <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-bold text-gray-800">إضافة فيديو جديد</h2><button type="button" id="paste-btn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 min-h-[44px] flex items-center gap-1"> 📥 لصق </button>
+     </div>
+     <form id="add-video-form" class="space-y-3">
+      <div><label for="video-title" class="block text-sm font-medium text-gray-700 mb-1">عنوان الفيديو</label> <input type="text" id="video-title" name="title" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base" placeholder="أدخل عنوان الفيديو">
       </div>
-      <div><label for="video-url" class="block text-sm font-medium text-gray-700 mb-2">رابط الفيديو</label> <input type="url" id="video-url" name="url" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="https://example.com/video.mp4">
-      </div><button type="submit" id="add-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200"> <span id="add-button-text">إضافة فيديو</span> <span id="add-loading" class="hidden">جاري الإضافة...</span> </button>
+      <div><label for="video-url" class="block text-sm font-medium text-gray-700 mb-1">رابط الفيديو</label> <input type="url" id="video-url" name="url" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base" placeholder="https://example.com/video.mp4">
+      </div><button type="submit" id="add-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 min-h-[44px]"> <span id="add-button-text">إضافة فيديو</span> <span id="add-loading" class="hidden">جاري الإضافة...</span> </button>
      </form>
     </div><!-- Videos List -->
-    <div class="bg-white rounded-2xl shadow-xl p-6">
-     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-gray-800">قائمة الفيديوهات</h2><span id="video-count" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">0 فيديو</span>
+    <div class="bg-white rounded-xl shadow-xl p-4">
+     <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold text-gray-800">قائمة الفيديوهات</h2><span id="video-count" class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">0 فيديو</span>
      </div>
-     <div id="videos-container" class="space-y-4">
-      <div id="empty-state" class="text-center py-12">
-       <div class="text-6xl mb-4">
+     <div id="videos-container" class="space-y-3">
+      <div id="empty-state" class="text-center py-8">
+       <div class="text-4xl mb-3">
         🎬
        </div>
-       <h3 class="text-xl font-semibold text-gray-600 mb-2">لا توجد فيديوهات بعد</h3>
-       <p class="text-gray-500">أضف أول فيديو لك باستخدام النموذج أعلاه</p>
+       <h3 class="text-lg font-semibold text-gray-600 mb-2">لا توجد فيديوهات بعد</h3>
+       <p class="text-gray-500 text-sm">أضف أول فيديو لك باستخدام النموذج أعلاه</p>
       </div>
      </div>
     </div>
@@ -136,10 +171,10 @@
                             document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
                         }
 
-                        // Apply font sizes
-                        document.getElementById('app-title').style.fontSize = `${baseSize * 2}px`;
-                        document.querySelectorAll('h2').forEach(h => h.style.fontSize = `${baseSize * 1.5}px`);
-                        document.querySelectorAll('p, input, button').forEach(el => el.style.fontSize = `${baseSize}px`);
+                        // Apply font sizes - mobile optimized
+                        document.getElementById('app-title').style.fontSize = `${Math.max(baseSize * 1.5, 18)}px`;
+                        document.querySelectorAll('h2').forEach(h => h.style.fontSize = `${Math.max(baseSize * 1.25, 16)}px`);
+                        document.querySelectorAll('p, input, button').forEach(el => el.style.fontSize = `${Math.max(baseSize, 14)}px`);
 
                         // Apply colors
                         const bgColor = config.background_color || '#667eea';
@@ -227,18 +262,150 @@
             }
         }
 
+        // Smart Paste Tool Handler
+        document.getElementById('smart-paste-btn').addEventListener('click', async () => {
+            try {
+                // Try to copy current page title and URL to clipboard
+                const pageTitle = document.title || 'فيديو';
+                const pageUrl = window.location.href;
+                const textToCopy = `${pageTitle}\n${pageUrl}`;
+                
+                await navigator.clipboard.writeText(textToCopy);
+                showToast('تم نسخ العنوان والرابط! الآن اذهب للمتصفح وانسخ عنوان الصفحة ورابطها');
+                
+                // Show instructions
+                const smartPasteBtn = document.getElementById('smart-paste-btn');
+                const originalText = smartPasteBtn.innerHTML;
+                smartPasteBtn.innerHTML = '✅ تم النسخ - اذهب للمتصفح';
+                setTimeout(() => {
+                    smartPasteBtn.innerHTML = originalText;
+                }, 3000);
+                
+            } catch (error) {
+                showToast('لنسخ العنوان والرابط من المتصفح: اضغط Ctrl+L ثم Ctrl+C لنسخ الرابط، وانسخ العنوان من التبويب', 'error');
+            }
+        });
+
+        // Paste Button Handler
+        document.getElementById('paste-btn').addEventListener('click', async () => {
+            try {
+                const clipboardText = await navigator.clipboard.readText();
+                
+                if (!clipboardText.trim()) {
+                    showToast('الحافظة فارغة! انسخ العنوان والرابط أولاً', 'error');
+                    return;
+                }
+
+                // Try to parse the clipboard content
+                const lines = clipboardText.trim().split('\n').filter(line => line.trim());
+                
+                let title = '';
+                let url = '';
+                
+                // Look for URL in the lines
+                for (const line of lines) {
+                    try {
+                        new URL(line.trim());
+                        url = line.trim();
+                        break;
+                    } catch {
+                        // Not a URL, continue
+                    }
+                }
+                
+                // Use remaining text as title
+                if (url) {
+                    const urlLine = lines.find(line => line.trim() === url);
+                    const titleLines = lines.filter(line => line.trim() !== url && line.trim().length > 0);
+                    title = titleLines.join(' ').trim();
+                } else {
+                    // If no URL found, treat first line as title and second as URL
+                    if (lines.length >= 2) {
+                        title = lines[0].trim();
+                        try {
+                            new URL(lines[1].trim());
+                            url = lines[1].trim();
+                        } catch {
+                            showToast('لم يتم العثور على رابط صحيح في النص المنسوخ', 'error');
+                            return;
+                        }
+                    } else if (lines.length === 1) {
+                        // Single line - check if it's URL or title
+                        try {
+                            new URL(lines[0].trim());
+                            url = lines[0].trim();
+                            title = 'فيديو'; // Default title
+                        } catch {
+                            title = lines[0].trim();
+                            showToast('تم لصق العنوان، يرجى إضافة الرابط يدوياً', 'error');
+                        }
+                    }
+                }
+                
+                // Fill the form
+                if (title) {
+                    document.getElementById('video-title').value = title;
+                }
+                if (url) {
+                    document.getElementById('video-url').value = url;
+                }
+                
+                if (title || url) {
+                    showToast('تم لصق البيانات بنجاح! 🎉');
+                    
+                    // Highlight the filled fields
+                    if (title) {
+                        const titleInput = document.getElementById('video-title');
+                        titleInput.style.backgroundColor = '#dcfce7';
+                        setTimeout(() => titleInput.style.backgroundColor = '', 2000);
+                    }
+                    if (url) {
+                        const urlInput = document.getElementById('video-url');
+                        urlInput.style.backgroundColor = '#dcfce7';
+                        setTimeout(() => urlInput.style.backgroundColor = '', 2000);
+                    }
+                } else {
+                    showToast('لم يتم العثور على بيانات صالحة في النص المنسوخ', 'error');
+                }
+                
+            } catch (error) {
+                if (error.name === 'NotAllowedError') {
+                    showToast('يرجى السماح بالوصول للحافظة، أو الصق البيانات يدوياً في الحقول', 'error');
+                } else {
+                    showToast('فشل في قراءة الحافظة: ' + error.message, 'error');
+                }
+            }
+        });
+
+        // Auto-paste on Ctrl+V in form inputs
+        document.getElementById('video-title').addEventListener('keydown', handleCtrlV);
+        document.getElementById('video-url').addEventListener('keydown', handleCtrlV);
+        
+        async function handleCtrlV(e) {
+            if (e.ctrlKey && e.key === 'v') {
+                e.preventDefault();
+                document.getElementById('paste-btn').click();
+            }
+        }
+
         // Add Video Form Handler
         document.getElementById('add-video-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            console.log('Form submitted'); // Debug log
             
             if (recordCount >= 999) {
                 showToast('تم الوصول للحد الأقصى من الفيديوهات (999). يرجى حذف بعض الفيديوهات أولاً.', 'error');
                 return;
             }
 
-            const formData = new FormData(e.target);
-            const title = formData.get('title').trim();
-            const url = formData.get('url').trim();
+            // Get values directly from input elements
+            const titleInput = document.getElementById('video-title');
+            const urlInput = document.getElementById('video-url');
+            const title = titleInput.value.trim();
+            const url = urlInput.value.trim();
+
+            console.log('Title:', title, 'URL:', url); // Debug log
 
             if (!title || !url) {
                 showToast('يرجى ملء جميع الحقول', 'error');
@@ -265,24 +432,34 @@
 
             try {
                 const videoData = {
-                    id: Date.now().toString(),
+                    id: Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9),
                     title: title,
                     url: url,
                     addedAt: new Date().toISOString(),
                     status: 'ready'
                 };
 
+                console.log('Creating video data:', videoData); // Debug log
+
                 if (window.dataSdk) {
                     const result = await window.dataSdk.create(videoData);
+                    console.log('Create result:', result); // Debug log
+                    
                     if (result.isOk) {
                         showToast('تم إضافة الفيديو بنجاح!');
-                        e.target.reset();
+                        titleInput.value = '';
+                        urlInput.value = '';
                     } else {
-                        showToast('فشل في إضافة الفيديو', 'error');
+                        console.error('Create failed:', result.error);
+                        showToast('فشل في إضافة الفيديو: ' + (result.error?.message || 'خطأ غير معروف'), 'error');
                     }
+                } else {
+                    console.error('Data SDK not available');
+                    showToast('خدمة حفظ البيانات غير متاحة', 'error');
                 }
             } catch (error) {
-                showToast('حدث خطأ أثناء إضافة الفيديو', 'error');
+                console.error('Error adding video:', error);
+                showToast('حدث خطأ أثناء إضافة الفيديو: ' + error.message, 'error');
             } finally {
                 // Reset loading state
                 addButton.disabled = false;
@@ -323,29 +500,29 @@
             existingItems.forEach(item => item.remove());
         }
 
-        // Create Video Item
+        // Create Video Item - Mobile Optimized
         function createVideoItem(video) {
             const item = document.createElement('div');
-            item.className = 'video-item bg-gray-50 rounded-xl p-4 border border-gray-200';
+            item.className = 'video-item bg-gray-50 rounded-lg p-3 border border-gray-200';
             item.dataset.videoId = video.id;
 
             const config = window.elementSdk?.config || defaultConfig;
             const downloadButtonText = config.download_button_text || defaultConfig.download_button_text;
 
             item.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-gray-900 truncate mb-1">${escapeHtml(video.title)}</h3>
-                        <p class="text-sm text-gray-500 truncate mb-2">${escapeHtml(video.url)}</p>
+                <div class="space-y-3">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-sm mb-1 leading-tight">${escapeHtml(video.title)}</h3>
+                        <p class="text-xs text-gray-500 break-all mb-1 leading-relaxed">${escapeHtml(video.url)}</p>
                         <p class="text-xs text-gray-400">تم الإضافة: ${formatDate(video.addedAt)}</p>
                     </div>
-                    <div class="flex items-center space-x-2 space-x-reverse">
+                    <div class="flex gap-2">
                         <button onclick="downloadVideo('${video.id}')" 
-                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-                            ${downloadButtonText}
+                                class="flex-1 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white py-2.5 px-3 rounded-lg text-sm font-medium transition-colors duration-200 min-h-[44px] flex items-center justify-center">
+                            📥 ${downloadButtonText}
                         </button>
                         <button onclick="deleteVideo('${video.id}')" 
-                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm transition-colors duration-200">
+                                class="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white px-3 py-2.5 rounded-lg text-sm transition-colors duration-200 min-h-[44px] flex items-center justify-center">
                             🗑️
                         </button>
                     </div>
@@ -363,7 +540,7 @@
             item.querySelector('h3').textContent = video.title;
             item.querySelector('p').textContent = video.url;
             item.querySelector('.text-xs').textContent = `تم الإضافة: ${formatDate(video.addedAt)}`;
-            item.querySelector('.bg-green-600').textContent = downloadButtonText;
+            item.querySelector('.bg-green-600').innerHTML = `📥 ${downloadButtonText}`;
         }
 
         // Download Video
@@ -390,7 +567,7 @@
             }
         }
 
-        // Delete Video
+        // Delete Video with mobile-friendly confirmation
         async function deleteVideo(videoId) {
             const video = currentVideos.find(v => v.id === videoId);
             if (!video) return;
@@ -399,13 +576,13 @@
             const deleteButton = videoItem.querySelector('.bg-red-600');
             
             // Show confirmation
-            const originalText = deleteButton.innerHTML;
+            const originalHTML = deleteButton.innerHTML;
             deleteButton.innerHTML = 'تأكيد الحذف؟';
             deleteButton.classList.add('bg-red-700');
             
             // Set timeout to revert if not clicked again
             const timeout = setTimeout(() => {
-                deleteButton.innerHTML = originalText;
+                deleteButton.innerHTML = originalHTML;
                 deleteButton.classList.remove('bg-red-700');
             }, 3000);
 
@@ -427,7 +604,7 @@
                 } catch (error) {
                     showToast('حدث خطأ أثناء حذف الفيديو', 'error');
                 } finally {
-                    deleteButton.innerHTML = originalText;
+                    deleteButton.innerHTML = originalHTML;
                     deleteButton.disabled = false;
                     deleteButton.classList.remove('bg-red-700');
                 }
@@ -441,7 +618,7 @@
             document.getElementById('video-count').textContent = `${count} فيديو`;
         }
 
-        // Show Toast Notification
+        // Show Toast Notification - Mobile Optimized
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -474,5 +651,5 @@
         // Initialize app when page loads
         initializeApp();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bb4eba76b65043',t:'MTc2MjY3MDMwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bb8aeda4de5043',t:'MTc2MjY3Mjc3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
