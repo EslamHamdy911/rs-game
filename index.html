@@ -1,223 +1,478 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini Arcade - نسخة محسّنة</title>
+<!doctype html>
+<html lang="ar" dir="rtl" style="height: 100%;">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محمل الفيديوهات</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { margin:0; background:#0b0f1a; font-family:sans-serif; color:#fff; overflow:hidden; }
-    #menu { position:absolute; inset:0; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; padding:20px; }
-    .btn { width:160px; height:65px; background:#111827; margin:10px; display:flex; justify-content:center; align-items:center; border-radius:12px; cursor:pointer; font-weight:bold; border:2px solid #1e293b; transition:0.2s; }
-    .btn:hover { background:#1e293b; transform:scale(1.05); }
-    canvas { background:#000; display:none; border:3px solid #1e293b; border-radius:12px; }
-    #back { position:absolute; top:10px; left:10px; padding:10px 20px; background:#1e293b; border-radius:8px; cursor:pointer; display:none; border:1px solid #334155; }
-    #scoreBox { position:absolute; top:10px; right:10px; padding:8px 20px; background:#1e293b; border-radius:8px; display:none; font-size:18px; }
-  </style>
-</head>
-<body>
-<div id="menu"></div>
-<canvas id="game" width="430" height="760"></canvas>
-<div id="back">⬅ رجوع</div>
-<div id="scoreBox">النتيجة: 0</div>
-<script>
-  const games = ["Flappy","Snake","Pong","Breakout","Tap","Runner","Dodger","Memory","Match","Simon"];
-  const menu = document.getElementById('menu');
-  const cvs = document.getElementById('game');
-  const ctx = cvs.getContext('2d');
-  const back = document.getElementById('back');
-  const scoreBox = document.getElementById('scoreBox');
-  let score = 0;
-
-  // ======= إنشاء قائمة الألعاب =======
-  games.forEach((g,i)=>{
-    const b=document.createElement('div'); b.className='btn'; b.textContent=(i+1)+" - "+g;
-    b.onclick=()=>startGame(i+1);
-    menu.appendChild(b);
-  });
-
-  function updateScore(v){ score=v; scoreBox.textContent = "النتيجة: "+v; }
-
-  // ======= لعبة 1: Flappy محسّنة =======
-  function game1(){
-    let birdY=300, vel=0, gravity=0.45, jump=-8;
-    let pipes=[];
-    let running=true;
-    let frame=0;
-    score = 0;
-    updateScore(0);
-
-    cvs.onclick=()=>vel=jump;
-
-    function loop(){ if(!running) return; requestAnimationFrame(loop);
-      ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
-
-      frame++;
-      vel+=gravity; birdY+=vel;
-
-      if(frame%70===0) pipes.push({x:cvs.width, gap:200+Math.random()*200});
-      pipes.forEach(p=>p.x-=4);
-      pipes = pipes.filter(p=>p.x>-80);
-
-      ctx.fillStyle='gold';
-      ctx.fillRect(200,birdY,40,30);
-
-      ctx.fillStyle='#22c55e';
-      pipes.forEach(p=>{
-        ctx.fillRect(p.x,0,60,p.gap-100);
-        ctx.fillRect(p.x,p.gap+100,60,800);
-
-        if(p.x===200) updateScore(++score);
-
-        if(200+40>p.x && 200<p.x+60){
-          if(birdY < p.gap-100 || birdY+30 > p.gap+100) running=false;
+        body {
+            box-sizing: border-box;
         }
-      });
-
-      if(birdY>760||birdY<0) running=false;
-      if(!running){ ctx.fillStyle='red'; ctx.fillText('Game Over',160,380); }
-    }
-    loop();
-  }
-
-  // ======= لعبة 2: Snake محسّنة =======
-  function game2(){
-    let size=20; let snake=[{x:5,y:5}], dir={x:1,y:0};
-    let food={x:10,y:10};
-    updateScore(0);
-
-    document.onkeydown=e=>{
-      if(e.key==='ArrowUp') dir={x:0,y:-1};
-      if(e.key==='ArrowDown') dir={x:0,y:1};
-      if(e.key==='ArrowLeft') dir={x:-1,y:0};
-      if(e.key==='ArrowRight') dir={x:1,y:0};
-    }
-
-    function loop(){ setTimeout(()=>{ requestAnimationFrame(loop);
-      ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
-
-      let head={x:snake[0].x+dir.x, y:snake[0].y+dir.y};
-      if(head.x<0)head.x=21; if(head.x>21)head.x=0;
-      if(head.y<0)head.y=34; if(head.y>34)head.y=0;
-
-      snake.unshift(head);
-      if(head.x===food.x && head.y===food.y){ 
-        updateScore(++score);
-        food={x:Math.floor(Math.random()*20), y:Math.floor(Math.random()*32)}; 
-      }
-      else snake.pop();
-
-      ctx.fillStyle='lime'; snake.forEach(s=>ctx.fillRect(s.x*size,s.y*size,size,size));
-
-      ctx.fillStyle='red'; ctx.fillRect(food.x*size,food.y*size,size,size);
-    },85); }
-    loop();
-  }
-
-  // ======= لعبة 3: Pong مطوّرة =======
-  function game3(){
-    let ball={x:210,y:350,vx:5,vy:4};
-    let p1=300;
-    updateScore(0);
-
-    cvs.onmousemove=e=>p1 = e.offsetY-40;
-
-    function loop(){ requestAnimationFrame(loop);
-      ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
-
-      ball.x+=ball.vx; ball.y+=ball.vy;
-
-      if(ball.y<0||ball.y>740) ball.vy*=-1;
-      if(ball.x<20 && ball.y>p1 && ball.y<p1+80){ ball.vx*=-1; updateScore(++score); }
-      if(ball.x>410) ball.vx*=-1;
-
-      ctx.fillStyle='white'; ctx.fillRect(10,p1,10,80);
-      ctx.fillRect(ball.x,ball.y,20,20);
-    }
-    loop();
-  }
-
-  // ======= لعبة 4: Breakout مطوّرة =======
-  function game4(){
-    let ball={x:210,y:500,vx:4,vy:-4};
-    let paddle=160;
-    let bricks=[];
-    updateScore(0);
-
-    for(let r=0;r<5;r++) for(let c=0;c<7;c++) 
-      bricks.push({x:c*60+10,y:r*30+20,w:55,h:22,alive:true,color:`hsl(${Math.random()*360},70%,60%)`});
-
-    cvs.onmousemove=e=>paddle=e.offsetX-70;
-
-    function loop(){ requestAnimationFrame(loop);
-      ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
-
-      ball.x+=ball.vx; ball.y+=ball.vy;
-
-      if(ball.x<0||ball.x>410) ball.vx*=-1;
-      if(ball.y<0) ball.vy*=-1;
-
-      if(ball.y>720 && ball.x>paddle && ball.x<paddle+140) ball.vy=-4;
-
-      ctx.fillStyle='white'; ctx.fillRect(paddle,720,140,20);
-      ctx.fillRect(ball.x,ball.y,20,20);
-
-      bricks.forEach(b=>{
-        if(b.alive){
-          ctx.fillStyle=b.color;
-          ctx.fillRect(b.x,b.y,b.w,b.h);
-
-          if(ball.x>b.x && ball.x<b.x+b.w && ball.y>b.y && ball.y<b.y+b.h){
-            b.alive=false; ball.vy*=-1; updateScore(score+5);
-          }
+        
+        .rtl {
+            direction: rtl;
         }
-      });
-    }
-    loop();
-  }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.error {
+            background: #ef4444;
+        }
+        
+        .video-item {
+            transition: all 0.2s ease;
+        }
+        
+        .video-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .download-progress {
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body style="height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" class="rtl">
+  <div style="height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px;">
+   <div class="max-w-4xl mx-auto"><!-- Header -->
+    <div class="text-center mb-8">
+     <h1 id="app-title" class="text-4xl font-bold text-white mb-2">محمل الفيديوهات</h1>
+     <p class="text-white/80 text-lg">أضف روابط الفيديوهات وحملها بسهولة</p>
+    </div><!-- Add Video Form -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+     <h2 class="text-2xl font-bold text-gray-800 mb-4">إضافة فيديو جديد</h2>
+     <form id="add-video-form" class="space-y-4">
+      <div><label for="video-title" class="block text-sm font-medium text-gray-700 mb-2">عنوان الفيديو</label> <input type="text" id="video-title" name="title" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="أدخل عنوان الفيديو">
+      </div>
+      <div><label for="video-url" class="block text-sm font-medium text-gray-700 mb-2">رابط الفيديو</label> <input type="url" id="video-url" name="url" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="https://example.com/video.mp4">
+      </div><button type="submit" id="add-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200"> <span id="add-button-text">إضافة فيديو</span> <span id="add-loading" class="hidden">جاري الإضافة...</span> </button>
+     </form>
+    </div><!-- Videos List -->
+    <div class="bg-white rounded-2xl shadow-xl p-6">
+     <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">قائمة الفيديوهات</h2><span id="video-count" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">0 فيديو</span>
+     </div>
+     <div id="videos-container" class="space-y-4">
+      <div id="empty-state" class="text-center py-12">
+       <div class="text-6xl mb-4">
+        🎬
+       </div>
+       <h3 class="text-xl font-semibold text-gray-600 mb-2">لا توجد فيديوهات بعد</h3>
+       <p class="text-gray-500">أضف أول فيديو لك باستخدام النموذج أعلاه</p>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div><!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+  <script>
+        // Configuration
+        const defaultConfig = {
+            app_title: "محمل الفيديوهات",
+            add_button_text: "إضافة فيديو",
+            download_button_text: "تحميل"
+        };
 
-  // ======= لعبة 5: Tap محسّنة =======
-  function game5(){
-    let t={x:200,y:300};
-    updateScore(0);
+        let currentVideos = [];
+        let recordCount = 0;
 
-    cvs.onclick=e=>{
-      if(Math.hypot(e.offsetX-t.x,e.offsetY-t.y)<50){ 
-        updateScore(++score);
-        t={x:60+Math.random()*300,y:80+Math.random()*600};
-      }
-    }
+        // Data SDK Handler
+        const dataHandler = {
+            onDataChanged(data) {
+                currentVideos = data;
+                recordCount = data.length;
+                renderVideosList(data);
+                updateVideoCount(data.length);
+            }
+        };
 
-    function loop(){ requestAnimationFrame(loop);
-      ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
-      ctx.fillStyle='red'; ctx.beginPath(); ctx.arc(t.x,t.y,50,0,7); ctx.fill();
-    }
-    loop();
-  }
+        // Initialize SDKs
+        async function initializeApp() {
+            // Initialize Data SDK
+            if (window.dataSdk) {
+                const initResult = await window.dataSdk.init(dataHandler);
+                if (!initResult.isOk) {
+                    showToast('فشل في تهيئة قاعدة البيانات', 'error');
+                }
+            }
 
-  // الألعاب 6–10 سيتم تطويرها لاحقًا
-  function game6(){ctx.fillText('Runner المطورة قادمة...',150,380);}  
-  function game7(){ctx.fillText('Dodger المطورة قادمة...',150,380);} 
-  function game8(){ctx.fillText('Memory المطورة قادمة...',150,380);} 
-  function game9(){ctx.fillText('Match المطورة قادمة...',150,380);} 
-  function game10(){ctx.fillText('Simon المطورة قادمة...',150,380);} 
+            // Initialize Element SDK
+            if (window.elementSdk) {
+                await window.elementSdk.init({
+                    defaultConfig,
+                    onConfigChange: async (config) => {
+                        const customFont = config.font_family || defaultConfig.font_family;
+                        const baseSize = config.font_size || 16;
+                        const baseFontStack = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
 
-  // ======= بدء اللعبة =======
-  function startGame(id){
-    menu.style.display='none';
-    cvs.style.display='block';
-    back.style.display='block';
-    scoreBox.style.display='block';
-    ctx.clearRect(0,0,cvs.width,cvs.height);
-    eval('game'+id+'()');
-  }
+                        // Apply font family
+                        if (customFont) {
+                            document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+                        }
 
-  back.onclick=()=>{
-    cvs.style.display='none'; 
-    menu.style.display='flex'; 
-    back.style.display='none';
-    scoreBox.style.display='none';
-    ctx.clearRect(0,0,cvs.width,cvs.height);
-  }
-</script>
-</body>
+                        // Apply font sizes
+                        document.getElementById('app-title').style.fontSize = `${baseSize * 2}px`;
+                        document.querySelectorAll('h2').forEach(h => h.style.fontSize = `${baseSize * 1.5}px`);
+                        document.querySelectorAll('p, input, button').forEach(el => el.style.fontSize = `${baseSize}px`);
+
+                        // Apply colors
+                        const bgColor = config.background_color || '#667eea';
+                        const surfaceColor = config.surface_color || '#ffffff';
+                        const textColor = config.text_color || '#1f2937';
+                        const primaryColor = config.primary_color || '#2563eb';
+                        const secondaryColor = config.secondary_color || '#6b7280';
+
+                        document.body.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${primaryColor} 100%)`;
+                        document.querySelectorAll('.bg-white').forEach(el => el.style.backgroundColor = surfaceColor);
+                        document.querySelectorAll('.text-gray-800, .text-gray-700').forEach(el => el.style.color = textColor);
+                        document.querySelectorAll('.bg-blue-600').forEach(el => el.style.backgroundColor = primaryColor);
+
+                        // Update text content
+                        document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
+                        document.getElementById('add-button-text').textContent = config.add_button_text || defaultConfig.add_button_text;
+                    },
+                    mapToCapabilities: (config) => ({
+                        recolorables: [
+                            {
+                                get: () => config.background_color || '#667eea',
+                                set: (value) => {
+                                    if (window.elementSdk) {
+                                        window.elementSdk.setConfig({ background_color: value });
+                                    }
+                                }
+                            },
+                            {
+                                get: () => config.surface_color || '#ffffff',
+                                set: (value) => {
+                                    if (window.elementSdk) {
+                                        window.elementSdk.setConfig({ surface_color: value });
+                                    }
+                                }
+                            },
+                            {
+                                get: () => config.text_color || '#1f2937',
+                                set: (value) => {
+                                    if (window.elementSdk) {
+                                        window.elementSdk.setConfig({ text_color: value });
+                                    }
+                                }
+                            },
+                            {
+                                get: () => config.primary_color || '#2563eb',
+                                set: (value) => {
+                                    if (window.elementSdk) {
+                                        window.elementSdk.setConfig({ primary_color: value });
+                                    }
+                                }
+                            },
+                            {
+                                get: () => config.secondary_color || '#6b7280',
+                                set: (value) => {
+                                    if (window.elementSdk) {
+                                        window.elementSdk.setConfig({ secondary_color: value });
+                                    }
+                                }
+                            }
+                        ],
+                        borderables: [],
+                        fontEditable: {
+                            get: () => config.font_family || 'Segoe UI',
+                            set: (value) => {
+                                if (window.elementSdk) {
+                                    window.elementSdk.setConfig({ font_family: value });
+                                }
+                            }
+                        },
+                        fontSizeable: {
+                            get: () => config.font_size || 16,
+                            set: (value) => {
+                                if (window.elementSdk) {
+                                    window.elementSdk.setConfig({ font_size: value });
+                                }
+                            }
+                        }
+                    }),
+                    mapToEditPanelValues: (config) => new Map([
+                        ['app_title', config.app_title || defaultConfig.app_title],
+                        ['add_button_text', config.add_button_text || defaultConfig.add_button_text],
+                        ['download_button_text', config.download_button_text || defaultConfig.download_button_text]
+                    ])
+                });
+            }
+        }
+
+        // Add Video Form Handler
+        document.getElementById('add-video-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (recordCount >= 999) {
+                showToast('تم الوصول للحد الأقصى من الفيديوهات (999). يرجى حذف بعض الفيديوهات أولاً.', 'error');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const title = formData.get('title').trim();
+            const url = formData.get('url').trim();
+
+            if (!title || !url) {
+                showToast('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+
+            // Validate URL
+            try {
+                new URL(url);
+            } catch {
+                showToast('يرجى إدخال رابط صحيح', 'error');
+                return;
+            }
+
+            // Show loading state
+            const addButton = document.getElementById('add-button');
+            const addButtonText = document.getElementById('add-button-text');
+            const addLoading = document.getElementById('add-loading');
+            
+            addButton.disabled = true;
+            addButton.classList.add('loading');
+            addButtonText.classList.add('hidden');
+            addLoading.classList.remove('hidden');
+
+            try {
+                const videoData = {
+                    id: Date.now().toString(),
+                    title: title,
+                    url: url,
+                    addedAt: new Date().toISOString(),
+                    status: 'ready'
+                };
+
+                if (window.dataSdk) {
+                    const result = await window.dataSdk.create(videoData);
+                    if (result.isOk) {
+                        showToast('تم إضافة الفيديو بنجاح!');
+                        e.target.reset();
+                    } else {
+                        showToast('فشل في إضافة الفيديو', 'error');
+                    }
+                }
+            } catch (error) {
+                showToast('حدث خطأ أثناء إضافة الفيديو', 'error');
+            } finally {
+                // Reset loading state
+                addButton.disabled = false;
+                addButton.classList.remove('loading');
+                addButtonText.classList.remove('hidden');
+                addLoading.classList.add('hidden');
+            }
+        });
+
+        // Render Videos List
+        function renderVideosList(videos) {
+            const container = document.getElementById('videos-container');
+            const emptyState = document.getElementById('empty-state');
+
+            if (videos.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            // Update existing items and create new ones
+            const existingItems = new Map();
+            container.querySelectorAll('.video-item').forEach(item => {
+                existingItems.set(item.dataset.videoId, item);
+            });
+
+            videos.forEach(video => {
+                if (existingItems.has(video.id)) {
+                    updateVideoItem(existingItems.get(video.id), video);
+                    existingItems.delete(video.id);
+                } else {
+                    container.appendChild(createVideoItem(video));
+                }
+            });
+
+            // Remove deleted items
+            existingItems.forEach(item => item.remove());
+        }
+
+        // Create Video Item
+        function createVideoItem(video) {
+            const item = document.createElement('div');
+            item.className = 'video-item bg-gray-50 rounded-xl p-4 border border-gray-200';
+            item.dataset.videoId = video.id;
+
+            const config = window.elementSdk?.config || defaultConfig;
+            const downloadButtonText = config.download_button_text || defaultConfig.download_button_text;
+
+            item.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-gray-900 truncate mb-1">${escapeHtml(video.title)}</h3>
+                        <p class="text-sm text-gray-500 truncate mb-2">${escapeHtml(video.url)}</p>
+                        <p class="text-xs text-gray-400">تم الإضافة: ${formatDate(video.addedAt)}</p>
+                    </div>
+                    <div class="flex items-center space-x-2 space-x-reverse">
+                        <button onclick="downloadVideo('${video.id}')" 
+                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+                            ${downloadButtonText}
+                        </button>
+                        <button onclick="deleteVideo('${video.id}')" 
+                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm transition-colors duration-200">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            return item;
+        }
+
+        // Update Video Item
+        function updateVideoItem(item, video) {
+            const config = window.elementSdk?.config || defaultConfig;
+            const downloadButtonText = config.download_button_text || defaultConfig.download_button_text;
+
+            item.querySelector('h3').textContent = video.title;
+            item.querySelector('p').textContent = video.url;
+            item.querySelector('.text-xs').textContent = `تم الإضافة: ${formatDate(video.addedAt)}`;
+            item.querySelector('.bg-green-600').textContent = downloadButtonText;
+        }
+
+        // Download Video
+        async function downloadVideo(videoId) {
+            const video = currentVideos.find(v => v.id === videoId);
+            if (!video) return;
+
+            try {
+                // Create download link
+                const link = document.createElement('a');
+                link.href = video.url;
+                link.download = video.title || 'video';
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                
+                // Trigger download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showToast('تم بدء التحميل!');
+            } catch (error) {
+                showToast('فشل في تحميل الفيديو', 'error');
+            }
+        }
+
+        // Delete Video
+        async function deleteVideo(videoId) {
+            const video = currentVideos.find(v => v.id === videoId);
+            if (!video) return;
+
+            const videoItem = document.querySelector(`[data-video-id="${videoId}"]`);
+            const deleteButton = videoItem.querySelector('.bg-red-600');
+            
+            // Show confirmation
+            const originalText = deleteButton.innerHTML;
+            deleteButton.innerHTML = 'تأكيد الحذف؟';
+            deleteButton.classList.add('bg-red-700');
+            
+            // Set timeout to revert if not clicked again
+            const timeout = setTimeout(() => {
+                deleteButton.innerHTML = originalText;
+                deleteButton.classList.remove('bg-red-700');
+            }, 3000);
+
+            // Replace click handler temporarily
+            const confirmDelete = async () => {
+                clearTimeout(timeout);
+                deleteButton.innerHTML = 'جاري الحذف...';
+                deleteButton.disabled = true;
+
+                try {
+                    if (window.dataSdk) {
+                        const result = await window.dataSdk.delete(video);
+                        if (result.isOk) {
+                            showToast('تم حذف الفيديو بنجاح!');
+                        } else {
+                            showToast('فشل في حذف الفيديو', 'error');
+                        }
+                    }
+                } catch (error) {
+                    showToast('حدث خطأ أثناء حذف الفيديو', 'error');
+                } finally {
+                    deleteButton.innerHTML = originalText;
+                    deleteButton.disabled = false;
+                    deleteButton.classList.remove('bg-red-700');
+                }
+            };
+
+            deleteButton.onclick = confirmDelete;
+        }
+
+        // Update Video Count
+        function updateVideoCount(count) {
+            document.getElementById('video-count').textContent = `${count} فيديو`;
+        }
+
+        // Show Toast Notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Utility Functions
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar-SA', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Initialize app when page loads
+        initializeApp();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bb4eba76b65043',t:'MTc2MjY3MDMwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
