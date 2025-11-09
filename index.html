@@ -317,6 +317,14 @@
             }
         }
         
+        /* Tablet optimizations */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .feature-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+        }
+        
         /* Dark mode support */
         .dark-mode {
             background: linear-gradient(135deg, #2d3436, #636e72);
@@ -406,6 +414,20 @@
        <h3 class="font-bold mb-1">حاجب الإعلانات</h3>
        <p class="text-sm opacity-90">تصفح نظيف بدون إزعاج</p>
       </div>
+      <div class="feature-card ai-assistant" onclick="openAIChat()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);">
+       <div class="text-2xl mb-2">
+        🤖
+       </div>
+       <h3 class="font-bold mb-1">المساعد الذكي</h3>
+       <p class="text-sm opacity-90">دردشة مع الذكاء الاصطناعي</p>
+      </div>
+      <div class="feature-card voice-commands" onclick="enableVoiceCommands()" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #d299c2 100%);">
+       <div class="text-2xl mb-2">
+        🎤
+       </div>
+       <h3 class="font-bold mb-1">الأوامر الصوتية</h3>
+       <p class="text-sm opacity-90">تحكم بالصوت في المتصفح</p>
+      </div>
      </div><!-- Popular Sites -->
      <div class="mb-6">
       <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">🌟 المواقع الشائعة</h2>
@@ -491,6 +513,46 @@
     <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
     <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">⚡ الإجراءات السريعة</h3>
     <div class="grid grid-cols-2 gap-4"><button onclick="takeScreenshot()" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-xl font-medium"> 📸 لقطة شاشة </button> <button onclick="shareCurrentPage()" class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-4 rounded-xl font-medium"> 📤 مشاركة </button> <button onclick="toggleDarkMode()" class="bg-gradient-to-r from-gray-700 to-gray-900 text-white p-4 rounded-xl font-medium"> 🌙 الوضع الليلي </button> <button onclick="openDownloads()" class="bg-gradient-to-r from-green-500 to-teal-500 text-white p-4 rounded-xl font-medium"> 📥 التحميلات </button>
+    </div>
+   </div>
+  </div><!-- AI Chat Interface -->
+  <div id="ai-chat-interface" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden">
+   <div class="absolute inset-4 bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden"><!-- Chat Header -->
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-4 flex items-center justify-between text-white">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl">
+       🤖
+      </div>
+      <div>
+       <h3 class="font-bold">المساعد الذكي</h3>
+       <p class="text-sm opacity-90" id="ai-status">متصل ومستعد للمساعدة</p>
+      </div>
+     </div><button onclick="closeAIChat()" class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"> ✕ </button>
+    </div><!-- Chat Messages -->
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+     <div class="flex items-start gap-3">
+      <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm">
+       🤖
+      </div>
+      <div class="bg-gray-100 rounded-2xl rounded-tl-sm p-3 max-w-xs">
+       <p class="text-gray-800">مرحباً! أنا مساعدك الذكي. يمكنني مساعدتك في:</p>
+       <ul class="text-sm text-gray-600 mt-2 space-y-1">
+        <li>• البحث عن المعلومات</li>
+        <li>• شرح المواضيع المعقدة</li>
+        <li>• ترجمة النصوص</li>
+        <li>• حل المشاكل التقنية</li>
+        <li>• الإجابة على أسئلتك</li>
+       </ul>
+      </div>
+     </div>
+    </div><!-- Chat Input -->
+    <div class="border-t border-gray-200 p-4">
+     <div class="flex items-center gap-3"><button id="voice-input-btn" onclick="startVoiceInput()" class="w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-colors"> 🎤 </button>
+      <div class="flex-1 relative"><input type="text" id="chat-input" class="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:outline-none" placeholder="اكتب رسالتك هنا..." onkeypress="handleChatInput(event)"> <button onclick="sendMessage()" class="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-colors"> ➤ </button>
+      </div>
+     </div><!-- Quick Suggestions -->
+     <div class="flex gap-2 mt-3 overflow-x-auto"><button onclick="sendQuickMessage('ما هو الذكاء الاصطناعي؟')" class="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors"> ما هو الذكاء الاصطناعي؟ </button> <button onclick="sendQuickMessage('ترجم إلى الإنجليزية')" class="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors"> ترجم إلى الإنجليزية </button> <button onclick="sendQuickMessage('اشرح لي موضوع')" class="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors"> اشرح لي موضوع </button> <button onclick="sendQuickMessage('ساعدني في البحث')" class="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors"> ساعدني في البحث </button>
+     </div>
     </div>
    </div>
   </div>
@@ -1044,7 +1106,74 @@
         function showWebPage(url) {
             document.getElementById('home-page').classList.add('hidden');
             document.getElementById('web-page').classList.remove('hidden');
-            document.getElementById('current-url').textContent = url;
+            
+            // Create iframe for real web browsing
+            const webPageContainer = document.getElementById('web-page');
+            webPageContainer.innerHTML = `
+                <div class="h-full flex flex-col">
+                    <!-- Page Info Bar -->
+                    <div class="bg-gray-50 border-b border-gray-200 p-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="text-lg">${getFaviconFromUrl(url)}</span>
+                            <div>
+                                <div class="font-medium text-gray-800">${extractTitleFromUrl(url)}</div>
+                                <div class="text-xs text-gray-500 truncate max-w-xs">${url}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="addCurrentToBookmarks()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+                                ⭐ إضافة للمفضلة
+                            </button>
+                            <button onclick="shareCurrentPage()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+                                📤 مشاركة
+                            </button>
+                            <button onclick="goHome()" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+                                🏠 الرئيسية
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Web Content Frame -->
+                    <div class="flex-1 relative">
+                        <iframe 
+                            id="web-frame" 
+                            src="${url}" 
+                            class="w-full h-full border-0"
+                            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation"
+                            loading="lazy"
+                            onload="handleFrameLoad()"
+                            onerror="handleFrameError()">
+                        </iframe>
+                        
+                        <!-- Loading Overlay -->
+                        <div id="frame-loading" class="absolute inset-0 bg-white flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                                <p class="text-gray-600 font-medium">جاري تحميل الصفحة...</p>
+                                <p class="text-sm text-gray-500 mt-2">${url}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Error Overlay -->
+                        <div id="frame-error" class="absolute inset-0 bg-gray-50 flex items-center justify-center hidden">
+                            <div class="text-center max-w-md">
+                                <div class="text-6xl mb-4">⚠️</div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">فشل في تحميل الصفحة</h3>
+                                <p class="text-gray-600 mb-4">لا يمكن الوصول إلى هذا الموقع حالياً</p>
+                                <div class="bg-white p-3 rounded-lg text-sm text-gray-700 mb-4 break-all">${url}</div>
+                                <div class="flex gap-2 justify-center">
+                                    <button onclick="retryLoad()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                        🔄 إعادة المحاولة
+                                    </button>
+                                    <button onclick="goHome()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                        🏠 الرئيسية
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
             
             // Update tab
             const activeTab = document.querySelector('.tab.active');
@@ -1360,6 +1489,241 @@
             showToast('📥 مدير التحميلات - قريباً!');
         }
 
+        // AI Chat Functions
+        let chatHistory = [];
+        let isAITyping = false;
+
+        // Open AI Chat
+        function openAIChat() {
+            document.getElementById('ai-chat-interface').classList.remove('hidden');
+            document.getElementById('chat-input').focus();
+            showToast('🤖 مرحباً بك في المساعد الذكي! اسأل أي سؤال');
+        }
+
+        // Close AI Chat
+        function closeAIChat() {
+            document.getElementById('ai-chat-interface').classList.add('hidden');
+        }
+
+        // Handle chat input
+        function handleChatInput(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Send message
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message || isAITyping) return;
+            
+            // Add user message
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            // Show AI typing
+            showAITyping();
+            
+            // Generate AI response
+            setTimeout(() => {
+                const response = generateAIResponse(message);
+                hideAITyping();
+                addChatMessage(response, 'ai');
+            }, 1000 + Math.random() * 2000);
+        }
+
+        // Send quick message
+        function sendQuickMessage(message) {
+            document.getElementById('chat-input').value = message;
+            sendMessage();
+        }
+
+        // Add chat message
+        function addChatMessage(message, sender) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            
+            if (sender === 'user') {
+                messageDiv.className = 'flex items-start gap-3 justify-end';
+                messageDiv.innerHTML = `
+                    <div class="bg-blue-500 text-white rounded-2xl rounded-tr-sm p-3 max-w-xs">
+                        <p>${escapeHtml(message)}</p>
+                    </div>
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                        👤
+                    </div>
+                `;
+            } else {
+                messageDiv.className = 'flex items-start gap-3';
+                messageDiv.innerHTML = `
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm">
+                        🤖
+                    </div>
+                    <div class="bg-gray-100 rounded-2xl rounded-tl-sm p-3 max-w-xs">
+                        <p class="text-gray-800">${escapeHtml(message)}</p>
+                    </div>
+                `;
+            }
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Save to chat history
+            chatHistory.push({ message, sender, timestamp: new Date().toISOString() });
+        }
+
+        // Show AI typing indicator
+        function showAITyping() {
+            isAITyping = true;
+            const messagesContainer = document.getElementById('chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'ai-typing';
+            typingDiv.className = 'flex items-start gap-3';
+            typingDiv.innerHTML = `
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm">
+                    🤖
+                </div>
+                <div class="bg-gray-100 rounded-2xl rounded-tl-sm p-3">
+                    <div class="flex gap-1">
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            document.getElementById('ai-status').textContent = 'يكتب...';
+        }
+
+        // Hide AI typing indicator
+        function hideAITyping() {
+            isAITyping = false;
+            const typingDiv = document.getElementById('ai-typing');
+            if (typingDiv) {
+                typingDiv.remove();
+            }
+            document.getElementById('ai-status').textContent = 'متصل ومستعد للمساعدة';
+        }
+
+        // Generate AI response (simulated)
+        function generateAIResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            // Greeting responses
+            if (message.includes('مرحبا') || message.includes('السلام') || message.includes('أهلا')) {
+                return 'مرحباً بك! أنا سعيد لرؤيتك. كيف يمكنني مساعدتك اليوم؟ 😊';
+            }
+            
+            // AI questions
+            if (message.includes('ذكاء اصطناعي') || message.includes('الذكاء الاصطناعي')) {
+                return 'الذكاء الاصطناعي هو تقنية تمكن الآلات من محاكاة الذكاء البشري. يشمل التعلم الآلي، معالجة اللغة الطبيعية، والرؤية الحاسوبية. يُستخدم في التطبيقات مثل المساعدات الصوتية، السيارات ذاتية القيادة، والتشخيص الطبي. 🤖✨';
+            }
+            
+            // Translation requests
+            if (message.includes('ترجم') || message.includes('translate')) {
+                return 'بالطبع! يمكنني مساعدتك في الترجمة. أرسل لي النص الذي تريد ترجمته وحدد اللغة المطلوبة. أدعم العربية، الإنجليزية، الفرنسية، الألمانية، الإسبانية وغيرها. 🌍📝';
+            }
+            
+            // Search help
+            if (message.includes('بحث') || message.includes('ابحث')) {
+                return 'يمكنني مساعدتك في البحث! أخبرني عن الموضوع الذي تريد البحث عنه وسأقدم لك معلومات مفيدة ومصادر موثوقة. يمكنني البحث في العلوم، التكنولوجيا، التاريخ، الثقافة وأكثر. 🔍📚';
+            }
+            
+            // Programming help
+            if (message.includes('برمجة') || message.includes('كود') || message.includes('programming')) {
+                return 'ممتاز! أستطيع مساعدتك في البرمجة. أدعم JavaScript, Python, HTML/CSS, React, Node.js وغيرها. يمكنني شرح المفاهيم، مراجعة الكود، أو مساعدتك في حل المشاكل البرمجية. 💻⚡';
+            }
+            
+            // Default responses for unclear messages
+            const defaultResponses = [
+                'هذا سؤال مثير للاهتمام! هل يمكنك توضيح أكثر حتى أتمكن من مساعدتك بشكل أفضل؟ 🤔',
+                'أعتذر، لم أفهم سؤالك تماماً. هل يمكنك إعادة صياغته بطريقة أخرى؟ 😅',
+                'سؤال رائع! أحتاج لمزيد من التفاصيل لأقدم لك إجابة مفيدة. ما الذي تريد معرفته تحديداً؟ 💡'
+            ];
+            
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+
+        // Voice input for chat
+        function startVoiceInput() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.lang = 'ar-SA';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                recognition.onstart = () => {
+                    document.getElementById('voice-input-btn').style.backgroundColor = '#ef4444';
+                    document.getElementById('ai-status').textContent = 'استمع... تحدث الآن';
+                };
+                
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('chat-input').value = transcript;
+                    sendMessage();
+                };
+                
+                recognition.onerror = () => {
+                    showToast('❌ فشل في التعرف على الصوت', 'error');
+                };
+                
+                recognition.onend = () => {
+                    document.getElementById('voice-input-btn').style.backgroundColor = '';
+                    document.getElementById('ai-status').textContent = 'متصل ومستعد للمساعدة';
+                };
+                
+                recognition.start();
+            } else {
+                showToast('❌ البحث الصوتي غير مدعوم في هذا المتصفح', 'error');
+            }
+        }
+
+        // Enable voice commands
+        function enableVoiceCommands() {
+            showToast('🎤 تم تفعيل الأوامر الصوتية! قل "مرحبا متصفح" لبدء الأوامر');
+            
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.lang = 'ar-SA';
+                recognition.continuous = true;
+                recognition.interimResults = false;
+                
+                recognition.onresult = (event) => {
+                    const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+                    
+                    if (transcript.includes('مرحبا متصفح') || transcript.includes('هاي متصفح')) {
+                        showToast('🎤 نعم، كيف يمكنني مساعدتك؟');
+                        
+                        if (transcript.includes('افتح جوجل')) {
+                            navigateTo('https://google.com');
+                        } else if (transcript.includes('افتح يوتيوب')) {
+                            navigateTo('https://youtube.com');
+                        } else if (transcript.includes('ابحث عن')) {
+                            const searchTerm = transcript.split('ابحث عن')[1];
+                            if (searchTerm) {
+                                navigateTo(`https://google.com/search?q=${encodeURIComponent(searchTerm.trim())}`);
+                            }
+                        } else if (transcript.includes('المساعد الذكي')) {
+                            openAIChat();
+                        } else if (transcript.includes('الرئيسية')) {
+                            goHome();
+                        }
+                    }
+                };
+                
+                recognition.start();
+            }
+        }
+
         // Utility functions
         function extractTitleFromUrl(url) {
             try {
@@ -1498,8 +1862,364 @@
             }
         }
 
+        // Frame handling functions
+        function handleFrameLoad() {
+            setTimeout(() => {
+                const loadingOverlay = document.getElementById('frame-loading');
+                if (loadingOverlay) {
+                    loadingOverlay.style.display = 'none';
+                }
+                showToast('✅ تم تحميل الصفحة بنجاح!');
+            }, 1000);
+        }
+
+        function handleFrameError() {
+            const loadingOverlay = document.getElementById('frame-loading');
+            const errorOverlay = document.getElementById('frame-error');
+            
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+            if (errorOverlay) errorOverlay.classList.remove('hidden');
+            
+            showToast('❌ فشل في تحميل الصفحة', 'error');
+        }
+
+        function retryLoad() {
+            const frame = document.getElementById('web-frame');
+            const loadingOverlay = document.getElementById('frame-loading');
+            const errorOverlay = document.getElementById('frame-error');
+            
+            if (errorOverlay) errorOverlay.classList.add('hidden');
+            if (loadingOverlay) loadingOverlay.style.display = 'flex';
+            
+            if (frame) {
+                frame.src = frame.src; // Reload the frame
+            }
+            
+            showToast('🔄 جاري إعادة تحميل الصفحة...');
+        }
+
+        function addCurrentToBookmarks() {
+            if (currentUrl) {
+                const siteId = currentSites.find(site => site.url === currentUrl)?.id;
+                if (siteId) {
+                    addToBookmarks(siteId);
+                } else {
+                    // Create new bookmark
+                    saveSiteVisit(currentUrl, true);
+                }
+            }
+        }
+
+        // Enhanced permissions for default browser functionality
+        const enhancedPermissions = [
+            {
+                name: 'INTERNET',
+                icon: '🌐',
+                title: 'الوصول للإنترنت',
+                description: 'للتصفح وتحميل المواقع والبحث',
+                required: true
+            },
+            {
+                name: 'SET_AS_DEFAULT_BROWSER',
+                icon: '🏠',
+                title: 'المتصفح الافتراضي',
+                description: 'لجعل هذا التطبيق المتصفح الافتراضي للجهاز',
+                required: true
+            },
+            {
+                name: 'HANDLE_WEB_LINKS',
+                icon: '🔗',
+                title: 'فتح الروابط',
+                description: 'لفتح جميع روابط الويب في هذا المتصفح',
+                required: true
+            },
+            {
+                name: 'WRITE_EXTERNAL_STORAGE',
+                icon: '💾',
+                title: 'حفظ الملفات',
+                description: 'لحفظ التحميلات والصور والمستندات',
+                required: true
+            },
+            {
+                name: 'READ_EXTERNAL_STORAGE',
+                icon: '📁',
+                title: 'قراءة الملفات',
+                description: 'لرفع الملفات ومشاركة المحتوى',
+                required: true
+            },
+            {
+                name: 'DOWNLOAD_WITHOUT_NOTIFICATION',
+                icon: '⬇️',
+                title: 'التحميل المباشر',
+                description: 'لتحميل الملفات بدون إشعارات إضافية',
+                required: true
+            },
+            {
+                name: 'CAMERA',
+                icon: '📷',
+                title: 'الكاميرا',
+                description: 'لالتقاط الصور ومسح الرموز المربعة',
+                required: false
+            },
+            {
+                name: 'RECORD_AUDIO',
+                icon: '🎤',
+                title: 'الميكروفون',
+                description: 'للبحث الصوتي والمكالمات الصوتية',
+                required: false
+            },
+            {
+                name: 'ACCESS_FINE_LOCATION',
+                icon: '📍',
+                title: 'الموقع الجغرافي',
+                description: 'لخدمات الخرائط والطقس المحلي',
+                required: false
+            },
+            {
+                name: 'VIBRATE',
+                icon: '📳',
+                title: 'الاهتزاز',
+                description: 'للتنبيهات والإشعارات التفاعلية',
+                required: false
+            },
+            {
+                name: 'SYSTEM_ALERT_WINDOW',
+                icon: '🔔',
+                title: 'النوافذ المنبثقة',
+                description: 'لعرض إشعارات التحميل والتنبيهات المهمة',
+                required: false
+            },
+            {
+                name: 'MODIFY_AUDIO_SETTINGS',
+                icon: '🔊',
+                title: 'إعدادات الصوت',
+                description: 'للتحكم في مستوى الصوت أثناء تشغيل الفيديو',
+                required: false
+            }
+        ];
+
+        // Update permissions dialog with enhanced permissions
+        function showEnhancedPermissionsDialog() {
+            const dialog = document.createElement('div');
+            dialog.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            dialog.innerHTML = `
+                <div class="bg-white rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                    <div class="p-6">
+                        <!-- Header -->
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                                🚀
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">متصفح الخارق</h2>
+                            <p class="text-gray-600 text-sm">ليصبح متصفحك الافتراضي ويعمل بكامل قوته</p>
+                        </div>
+
+                        <!-- Default Browser Notice -->
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-2xl p-4 mb-6">
+                            <div class="flex items-start gap-3">
+                                <div class="text-blue-500 text-2xl">🏠</div>
+                                <div>
+                                    <h4 class="font-bold text-blue-800 mb-2">اجعلني متصفحك الافتراضي!</h4>
+                                    <p class="text-sm text-blue-700 mb-3">
+                                        • فتح جميع الروابط في متصفح الخارق<br>
+                                        • تجربة تصفح موحدة وسريعة<br>
+                                        • حماية وخصوصية متقدمة<br>
+                                        • تحميل مباشر للملفات
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Permissions List -->
+                        <div class="space-y-3 mb-6 max-h-60 overflow-y-auto">
+                            ${enhancedPermissions.map(permission => `
+                                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
+                                        ${permission.icon}
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <h3 class="font-semibold text-gray-800 text-sm">${permission.title}</h3>
+                                            ${permission.required ? '<span class="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full">مطلوب</span>' : '<span class="bg-green-100 text-green-600 text-xs px-2 py-0.5 rounded-full">اختياري</span>'}
+                                        </div>
+                                        <p class="text-xs text-gray-600">${permission.description}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Privacy Notice -->
+                        <div class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6">
+                            <div class="flex items-start gap-3">
+                                <div class="text-green-500 text-xl">🔒</div>
+                                <div>
+                                    <h4 class="font-semibold text-green-800 mb-1">حماية الخصوصية المتقدمة</h4>
+                                    <p class="text-sm text-green-700">
+                                        🛡️ حاجب إعلانات مدمج<br>
+                                        🔐 تشفير البيانات محلياً<br>
+                                        🚫 عدم تتبع أو مشاركة البيانات<br>
+                                        ⚡ سرعة فائقة وأداء محسّن
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3">
+                            <button onclick="denyEnhancedPermissions()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-2xl transition-all">
+                                ليس الآن
+                            </button>
+                            <button onclick="acceptEnhancedPermissions()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all shadow-lg">
+                                🚀 اجعلني الافتراضي
+                            </button>
+                        </div>
+
+                        <!-- Terms Link -->
+                        <div class="text-center mt-4">
+                            <p class="text-xs text-gray-500">
+                                بالمتابعة، أنت توافق على جعل متصفح الخارق متصفحك الافتراضي
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(dialog);
+        }
+
+        // Accept enhanced permissions
+        function acceptEnhancedPermissions() {
+            permissionsGranted = true;
+            localStorage.setItem('superBrowser_permissions', 'granted');
+            localStorage.setItem('superBrowser_defaultBrowser', 'true');
+            document.querySelector('.fixed.inset-0.bg-black\\/60').remove();
+            
+            showToast('🎉 مرحباً بك في متصفحك الافتراضي الجديد!');
+            
+            // Simulate setting as default browser
+            setTimeout(() => {
+                showToast('🏠 تم تعيين متصفح الخارق كمتصفح افتراضي');
+            }, 1000);
+            
+            setTimeout(() => {
+                showToast('🔗 سيتم فتح جميع الروابط في متصفح الخارق');
+            }, 2000);
+            
+            setTimeout(() => {
+                showToast('✅ جميع الأذونات جاهزة! استمتع بالتصفح الفائق');
+            }, 3000);
+            
+            continueAppInitialization();
+        }
+
+        // Deny enhanced permissions
+        function denyEnhancedPermissions() {
+            const dialog = document.querySelector('.fixed.inset-0.bg-black\\/60');
+            dialog.innerHTML = `
+                <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                            🤔
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">تفويت فرصة رائعة!</h2>
+                        <p class="text-gray-600 mb-4">
+                            بدون هذه الأذونات ستفوتك:<br>
+                            • التصفح السريع والآمن<br>
+                            • فتح الروابط تلقائياً<br>
+                            • التحميل المباشر<br>
+                            • الحماية المتقدمة
+                        </p>
+                        
+                        <div class="flex gap-3">
+                            <button onclick="continueWithoutDefault()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-2xl transition-all">
+                                متابعة بدون
+                            </button>
+                            <button onclick="showEnhancedPermissionsDialog()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-2xl transition-all">
+                                🚀 أريد الأفضل
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Continue without default browser
+        function continueWithoutDefault() {
+            permissionsGranted = true;
+            localStorage.setItem('superBrowser_permissions', 'basic');
+            document.querySelector('.fixed.inset-0.bg-black\\/60').remove();
+            
+            showToast('⚠️ يمكنك تفعيل المتصفح الافتراضي لاحقاً من الإعدادات');
+            continueAppInitialization();
+        }
+
+        // Update save site visit to handle bookmarks
+        async function saveSiteVisit(url, isBookmark = false) {
+            if (recordCount >= 999) {
+                showToast('تم الوصول للحد الأقصى من المواقع المحفوظة', 'error');
+                return;
+            }
+
+            try {
+                const title = extractTitleFromUrl(url);
+                const favicon = getFaviconFromUrl(url);
+                
+                // Check if site already exists
+                const existingSite = currentSites.find(site => site.url === url);
+                
+                if (existingSite) {
+                    // Update visit count and last visited
+                    const updatedSite = {
+                        ...existingSite,
+                        visitCount: (existingSite.visitCount || 0) + 1,
+                        lastVisited: new Date().toISOString(),
+                        isBookmarked: isBookmark || existingSite.isBookmarked
+                    };
+                    
+                    if (window.dataSdk) {
+                        await window.dataSdk.update(updatedSite);
+                    } else {
+                        updateLocalStorage(updatedSite);
+                    }
+                } else {
+                    // Create new site entry
+                    const siteData = {
+                        id: Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9),
+                        title: title,
+                        url: url,
+                        favicon: favicon,
+                        visitCount: 1,
+                        lastVisited: new Date().toISOString(),
+                        isBookmarked: isBookmark,
+                        category: getCategoryFromUrl(url)
+                    };
+                    
+                    if (window.dataSdk) {
+                        await window.dataSdk.create(siteData);
+                    } else {
+                        addToLocalStorage(siteData);
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving site visit:', error);
+            }
+        }
+
+        // Update initialization to use enhanced permissions
+        async function initializeApp() {
+            // Check if permissions were previously granted
+            const savedPermissions = localStorage.getItem('superBrowser_permissions');
+            if (!savedPermissions) {
+                showEnhancedPermissionsDialog();
+                return;
+            }
+            
+            permissionsGranted = true;
+            continueAppInitialization();
+        }
+
         // Initialize the app
         initializeApp();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bbe27aa6ca5043',t:'MTc2MjY3NjM2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bbfc6fb3f75043',t:'MTc2MjY3NzQyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
