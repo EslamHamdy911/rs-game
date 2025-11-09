@@ -1,25 +1,223 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>Mini Arcade 2D</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Arcade - نسخة محسّنة</title>
+  <style>
+    body { margin:0; background:#0b0f1a; font-family:sans-serif; color:#fff; overflow:hidden; }
+    #menu { position:absolute; inset:0; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; padding:20px; }
+    .btn { width:160px; height:65px; background:#111827; margin:10px; display:flex; justify-content:center; align-items:center; border-radius:12px; cursor:pointer; font-weight:bold; border:2px solid #1e293b; transition:0.2s; }
+    .btn:hover { background:#1e293b; transform:scale(1.05); }
+    canvas { background:#000; display:none; border:3px solid #1e293b; border-radius:12px; }
+    #back { position:absolute; top:10px; left:10px; padding:10px 20px; background:#1e293b; border-radius:8px; cursor:pointer; display:none; border:1px solid #334155; }
+    #scoreBox { position:absolute; top:10px; right:10px; padding:8px 20px; background:#1e293b; border-radius:8px; display:none; font-size:18px; }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>🎮 Mini Arcade</h1>
-    <nav>
-      <button onclick="loadGame('snake')">لعبة الثعبان</button>
-      <button onclick="loadGame('pong')">لعبة البونغ</button>
-    </nav>
-  </header>
+<div id="menu"></div>
+<canvas id="game" width="430" height="760"></canvas>
+<div id="back">⬅ رجوع</div>
+<div id="scoreBox">النتيجة: 0</div>
+<script>
+  const games = ["Flappy","Snake","Pong","Breakout","Tap","Runner","Dodger","Memory","Match","Simon"];
+  const menu = document.getElementById('menu');
+  const cvs = document.getElementById('game');
+  const ctx = cvs.getContext('2d');
+  const back = document.getElementById('back');
+  const scoreBox = document.getElementById('scoreBox');
+  let score = 0;
 
-  <main>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
-  </main>
+  // ======= إنشاء قائمة الألعاب =======
+  games.forEach((g,i)=>{
+    const b=document.createElement('div'); b.className='btn'; b.textContent=(i+1)+" - "+g;
+    b.onclick=()=>startGame(i+1);
+    menu.appendChild(b);
+  });
 
-  <script src="main.js"></script>
-  <script src="snake.js"></script>
-  <script src="pong.js"></script>
+  function updateScore(v){ score=v; scoreBox.textContent = "النتيجة: "+v; }
+
+  // ======= لعبة 1: Flappy محسّنة =======
+  function game1(){
+    let birdY=300, vel=0, gravity=0.45, jump=-8;
+    let pipes=[];
+    let running=true;
+    let frame=0;
+    score = 0;
+    updateScore(0);
+
+    cvs.onclick=()=>vel=jump;
+
+    function loop(){ if(!running) return; requestAnimationFrame(loop);
+      ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
+
+      frame++;
+      vel+=gravity; birdY+=vel;
+
+      if(frame%70===0) pipes.push({x:cvs.width, gap:200+Math.random()*200});
+      pipes.forEach(p=>p.x-=4);
+      pipes = pipes.filter(p=>p.x>-80);
+
+      ctx.fillStyle='gold';
+      ctx.fillRect(200,birdY,40,30);
+
+      ctx.fillStyle='#22c55e';
+      pipes.forEach(p=>{
+        ctx.fillRect(p.x,0,60,p.gap-100);
+        ctx.fillRect(p.x,p.gap+100,60,800);
+
+        if(p.x===200) updateScore(++score);
+
+        if(200+40>p.x && 200<p.x+60){
+          if(birdY < p.gap-100 || birdY+30 > p.gap+100) running=false;
+        }
+      });
+
+      if(birdY>760||birdY<0) running=false;
+      if(!running){ ctx.fillStyle='red'; ctx.fillText('Game Over',160,380); }
+    }
+    loop();
+  }
+
+  // ======= لعبة 2: Snake محسّنة =======
+  function game2(){
+    let size=20; let snake=[{x:5,y:5}], dir={x:1,y:0};
+    let food={x:10,y:10};
+    updateScore(0);
+
+    document.onkeydown=e=>{
+      if(e.key==='ArrowUp') dir={x:0,y:-1};
+      if(e.key==='ArrowDown') dir={x:0,y:1};
+      if(e.key==='ArrowLeft') dir={x:-1,y:0};
+      if(e.key==='ArrowRight') dir={x:1,y:0};
+    }
+
+    function loop(){ setTimeout(()=>{ requestAnimationFrame(loop);
+      ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
+
+      let head={x:snake[0].x+dir.x, y:snake[0].y+dir.y};
+      if(head.x<0)head.x=21; if(head.x>21)head.x=0;
+      if(head.y<0)head.y=34; if(head.y>34)head.y=0;
+
+      snake.unshift(head);
+      if(head.x===food.x && head.y===food.y){ 
+        updateScore(++score);
+        food={x:Math.floor(Math.random()*20), y:Math.floor(Math.random()*32)}; 
+      }
+      else snake.pop();
+
+      ctx.fillStyle='lime'; snake.forEach(s=>ctx.fillRect(s.x*size,s.y*size,size,size));
+
+      ctx.fillStyle='red'; ctx.fillRect(food.x*size,food.y*size,size,size);
+    },85); }
+    loop();
+  }
+
+  // ======= لعبة 3: Pong مطوّرة =======
+  function game3(){
+    let ball={x:210,y:350,vx:5,vy:4};
+    let p1=300;
+    updateScore(0);
+
+    cvs.onmousemove=e=>p1 = e.offsetY-40;
+
+    function loop(){ requestAnimationFrame(loop);
+      ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
+
+      ball.x+=ball.vx; ball.y+=ball.vy;
+
+      if(ball.y<0||ball.y>740) ball.vy*=-1;
+      if(ball.x<20 && ball.y>p1 && ball.y<p1+80){ ball.vx*=-1; updateScore(++score); }
+      if(ball.x>410) ball.vx*=-1;
+
+      ctx.fillStyle='white'; ctx.fillRect(10,p1,10,80);
+      ctx.fillRect(ball.x,ball.y,20,20);
+    }
+    loop();
+  }
+
+  // ======= لعبة 4: Breakout مطوّرة =======
+  function game4(){
+    let ball={x:210,y:500,vx:4,vy:-4};
+    let paddle=160;
+    let bricks=[];
+    updateScore(0);
+
+    for(let r=0;r<5;r++) for(let c=0;c<7;c++) 
+      bricks.push({x:c*60+10,y:r*30+20,w:55,h:22,alive:true,color:`hsl(${Math.random()*360},70%,60%)`});
+
+    cvs.onmousemove=e=>paddle=e.offsetX-70;
+
+    function loop(){ requestAnimationFrame(loop);
+      ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
+
+      ball.x+=ball.vx; ball.y+=ball.vy;
+
+      if(ball.x<0||ball.x>410) ball.vx*=-1;
+      if(ball.y<0) ball.vy*=-1;
+
+      if(ball.y>720 && ball.x>paddle && ball.x<paddle+140) ball.vy=-4;
+
+      ctx.fillStyle='white'; ctx.fillRect(paddle,720,140,20);
+      ctx.fillRect(ball.x,ball.y,20,20);
+
+      bricks.forEach(b=>{
+        if(b.alive){
+          ctx.fillStyle=b.color;
+          ctx.fillRect(b.x,b.y,b.w,b.h);
+
+          if(ball.x>b.x && ball.x<b.x+b.w && ball.y>b.y && ball.y<b.y+b.h){
+            b.alive=false; ball.vy*=-1; updateScore(score+5);
+          }
+        }
+      });
+    }
+    loop();
+  }
+
+  // ======= لعبة 5: Tap محسّنة =======
+  function game5(){
+    let t={x:200,y:300};
+    updateScore(0);
+
+    cvs.onclick=e=>{
+      if(Math.hypot(e.offsetX-t.x,e.offsetY-t.y)<50){ 
+        updateScore(++score);
+        t={x:60+Math.random()*300,y:80+Math.random()*600};
+      }
+    }
+
+    function loop(){ requestAnimationFrame(loop);
+      ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
+      ctx.fillStyle='red'; ctx.beginPath(); ctx.arc(t.x,t.y,50,0,7); ctx.fill();
+    }
+    loop();
+  }
+
+  // الألعاب 6–10 سيتم تطويرها لاحقًا
+  function game6(){ctx.fillText('Runner المطورة قادمة...',150,380);}  
+  function game7(){ctx.fillText('Dodger المطورة قادمة...',150,380);} 
+  function game8(){ctx.fillText('Memory المطورة قادمة...',150,380);} 
+  function game9(){ctx.fillText('Match المطورة قادمة...',150,380);} 
+  function game10(){ctx.fillText('Simon المطورة قادمة...',150,380);} 
+
+  // ======= بدء اللعبة =======
+  function startGame(id){
+    menu.style.display='none';
+    cvs.style.display='block';
+    back.style.display='block';
+    scoreBox.style.display='block';
+    ctx.clearRect(0,0,cvs.width,cvs.height);
+    eval('game'+id+'()');
+  }
+
+  back.onclick=()=>{
+    cvs.style.display='none'; 
+    menu.style.display='flex'; 
+    back.style.display='none';
+    scoreBox.style.display='none';
+    ctx.clearRect(0,0,cvs.width,cvs.height);
+  }
+</script>
 </body>
 </html>
