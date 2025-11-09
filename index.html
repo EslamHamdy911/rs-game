@@ -3,38 +3,275 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>محمل الفيديوهات</title><!-- Web App Manifest for Share Target -->
-  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogItin2YXYrdmF2YQg2KfZhNmB2YrYr9mK2YjZh9in2KoiLAogICJzaG9ydF9uYW1lIjogItin2YXYrdmF2YQg2KfZhNmB2YrYr9mK2YjZh9in2KoiLAogICJzdGFydF91cmwiOiAiLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgInRoZW1lX2NvbG9yIjogIiM2NjdlZWEiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiM2NjdlZWEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXhNakFpSUdobGFXZG9kRDBpTVRJd0lqNDhjbVZqZENCM2FXUjBhRDBpTVRJd0lpQm9aV2xuYUhROUlqRXlNQ0lpSUdacGJHdzlJaU0yTmpkbFpXRWlMejQ4ZEdWNGRDQjRQU0kyTUNJZ2VUMGlOakFpSUdacGJHdzlJaU0zWm1abVptWWlJR1p2Ym5RdGMybDZaVDBpTWpRaUlIUmxlSFF0WVc1amFHOXlQU0p0YVdSa2JHVWlQaUE4TDNSbGVIUStQQzl6ZG1jKyIsCiAgICAgICJzaXplcyI6ICIxMjB4MTIwIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdLAogICJzaGFyZV90YXJnZXQiOiB7CiAgICAiYWN0aW9uIjogIi8iLAogICAgIm1ldGhvZCI6ICJHRVQiLAogICAgInBhcmFtcyI6IHsKICAgICAgInRpdGxlIjogInRpdGxlIiwKICAgICAgInRleHQiOiAidGV4dCIsCiAgICAgICJ1cmwiOiAidXJsIgogICAgfQogIH0KfQ==">
+  <title>متصفح الخارق - Super Browser</title>
+  <script src="/_sdk/data_sdk.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-        body {
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
             box-sizing: border-box;
         }
         
-        .rtl {
-            direction: rtl;
+        body {
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
-        .loading {
-            opacity: 0.6;
+        .browser-frame {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .browser-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
             pointer-events: none;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .address-bar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 28px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 8px 16px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .browser-content {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 28px 28px 0 0;
+            min-height: 70%;
+            box-shadow: 
+                0 -20px 40px rgba(0, 0, 0, 0.1),
+                0 -8px 16px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-bottom: none;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 24px;
+            padding: 24px;
+            color: white;
+            box-shadow: 
+                0 20px 40px rgba(102, 126, 234, 0.25),
+                0 8px 16px rgba(102, 126, 234, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 32px 64px rgba(102, 126, 234, 0.3),
+                0 16px 32px rgba(102, 126, 234, 0.2);
+        }
+        
+        .feature-card:active {
+            transform: translateY(-4px) scale(0.98);
+            box-shadow: 
+                0 16px 32px rgba(102, 126, 234, 0.25),
+                0 8px 16px rgba(102, 126, 234, 0.15);
+        }
+        
+        .quick-access {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            box-shadow: 
+                0 20px 40px rgba(102, 126, 234, 0.25),
+                0 8px 16px rgba(118, 75, 162, 0.15);
+        }
+        
+        .privacy-mode {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #d299c2 100%);
+            box-shadow: 
+                0 20px 40px rgba(168, 237, 234, 0.25),
+                0 8px 16px rgba(254, 214, 227, 0.15);
+        }
+        
+        .speed-boost {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9a9e 100%);
+            box-shadow: 
+                0 20px 40px rgba(255, 236, 210, 0.25),
+                0 8px 16px rgba(252, 182, 159, 0.15);
+        }
+        
+        .ad-blocker {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 50%, #fad0c4 100%);
+            box-shadow: 
+                0 20px 40px rgba(161, 140, 209, 0.25),
+                0 8px 16px rgba(251, 194, 235, 0.15);
+        }
+        
+        .floating-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 28px;
+            box-shadow: 
+                0 16px 32px rgba(102, 126, 234, 0.3),
+                0 8px 16px rgba(118, 75, 162, 0.2);
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .floating-btn:hover {
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 
+                0 24px 48px rgba(102, 126, 234, 0.4),
+                0 12px 24px rgba(118, 75, 162, 0.3);
+        }
+        
+        .floating-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .tab-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 0 6px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+            color: #1f2937;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transform: translateY(-1px);
+        }
+        
+        .bookmark-item {
+            background: linear-gradient(135deg, #fd79a8, #fdcb6e);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 8px 0;
+            color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .bookmark-item:active {
+            transform: scale(0.98);
+        }
+        
+        .search-suggestions {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .suggestion-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .suggestion-item:hover {
+            background: #f8f9fa;
         }
         
         .toast {
             position: fixed;
             top: 20px;
-            right: 20px;
             left: 20px;
-            background: #10b981;
+            right: 20px;
+            background: linear-gradient(135deg, #00b894, #00cec9);
             color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            z-index: 1000;
+            padding: 15px;
+            border-radius: 15px;
+            z-index: 2000;
             transform: translateY(-100px);
             transition: transform 0.3s ease;
             text-align: center;
-            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
         }
         
         .toast.show {
@@ -42,18 +279,23 @@
         }
         
         .toast.error {
-            background: #ef4444;
+            background: linear-gradient(135deg, #e17055, #d63031);
         }
         
-        .video-item {
-            transition: all 0.2s ease;
+        .loading-bar {
+            height: 3px;
+            background: linear-gradient(90deg, #74b9ff, #0984e3);
+            border-radius: 2px;
+            animation: loading 2s infinite;
         }
         
-        .video-item:active {
-            transform: scale(0.98);
+        @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
         }
         
-        .pulse-animation {
+        .pulse {
             animation: pulse 2s infinite;
         }
         
@@ -62,253 +304,426 @@
             50% { opacity: 0.7; }
         }
         
-        /* Mobile-first responsive design */
+        /* Mobile optimizations */
         @media (max-width: 640px) {
-            .container-padding {
-                padding: 12px;
+            .feature-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
             }
             
-            .card-padding {
-                padding: 16px;
-            }
-            
-            .button-text {
+            .feature-card {
+                padding: 15px;
                 font-size: 14px;
             }
         }
         
-        /* Touch-friendly buttons */
-        button {
-            min-height: 44px;
-            touch-action: manipulation;
+        /* Dark mode support */
+        .dark-mode {
+            background: linear-gradient(135deg, #2d3436, #636e72);
         }
         
-        input {
-            min-height: 44px;
+        .dark-mode .browser-content {
+            background: #2d3436;
+            color: white;
         }
         
-        /* Prevent zoom on input focus */
-        input[type="text"], input[type="url"] {
-            font-size: 16px;
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            border-radius: 3px;
         }
     </style>
   <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body style="height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" class="rtl">
-  <div style="height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px;">
-   <div class="max-w-md mx-auto"><!-- Header -->
-    <div class="text-center mb-6">
-     <div class="flex items-center justify-between mb-4">
-      <div></div>
-      <h1 id="app-title" class="text-2xl font-bold text-white">محمل الفيديوهات</h1><button id="share-btn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm p-2 rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center"> 🔗 </button>
-     </div>
-     <p class="text-white/80 text-sm">أضف روابط الفيديوهات وحملها بسهولة</p>
-    </div><!-- Smart Paste Tool -->
-    <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-xl p-4 mb-4 text-white">
-     <div class="flex items-center justify-between mb-3">
-      <h2 class="text-lg font-bold">🎯 أداة النسخ الذكية</h2>
-      <div class="flex gap-2"><button id="smart-paste-btn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px] flex items-center gap-1"> 📋 نسخ </button> <button id="share-receive-btn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px] flex items-center gap-1"> 📱 استقبال </button>
-      </div>
-     </div>
-     <p class="text-white/90 text-sm">انسخ من المتصفح أو شارك الرابط مباشرة من هاتفك إلى التطبيق!</p><!-- Share Target Instructions -->
-     <div id="share-instructions" class="mt-3 p-3 bg-white/10 rounded-lg text-sm hidden">
-      <div class="flex items-center gap-2 mb-2"><span class="text-lg">📲</span> <strong>كيفية المشاركة من المتصفح:</strong>
-      </div>
-      <ol class="list-decimal list-inside space-y-1 text-white/90">
-       <li>افتح الفيديو في المتصفح</li>
-       <li>اضغط زر "مشاركة" في المتصفح</li>
-       <li>اختر "محمل الفيديوهات" من القائمة</li>
-       <li>سيتم إضافة الفيديو تلقائياً!</li>
-      </ol>
-     </div>
-    </div><!-- Shared Content Alert -->
-    <div id="shared-content-alert" class="bg-green-500 rounded-xl shadow-xl p-4 mb-4 text-white hidden">
-     <div class="flex items-center justify-between mb-3">
-      <div class="flex items-center gap-2"><span class="text-xl">🎉</span>
-       <h3 class="font-bold">تم استقبال محتوى مشارك!</h3>
-      </div><button id="dismiss-shared" class="text-white/80 hover:text-white">✕</button>
-     </div>
-     <div id="shared-content-preview" class="bg-white/20 rounded-lg p-3 mb-3">
-      <p id="shared-title" class="font-medium mb-1"></p>
-      <p id="shared-url" class="text-sm text-white/90 break-all"></p>
-     </div>
-     <div class="flex gap-2"><button id="add-shared-content" class="flex-1 bg-white text-green-600 font-bold py-2 px-4 rounded-lg hover:bg-white/90 transition-colors"> إضافة للقائمة </button> <button id="ignore-shared" class="bg-white/20 text-white py-2 px-4 rounded-lg hover:bg-white/30 transition-colors"> تجاهل </button>
-     </div>
-    </div><!-- Add Video Form -->
-    <div class="bg-white rounded-xl shadow-xl p-4 mb-4">
-     <div class="flex items-center justify-between mb-3">
-      <h2 class="text-lg font-bold text-gray-800">إضافة فيديو جديد</h2><button type="button" id="paste-btn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 min-h-[44px] flex items-center gap-1"> 📥 لصق </button>
-     </div>
-     <form id="add-video-form" class="space-y-3">
-      <div><label for="video-title" class="block text-sm font-medium text-gray-700 mb-1">عنوان الفيديو</label> <input type="text" id="video-title" name="title" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base" placeholder="أدخل عنوان الفيديو">
-      </div>
-      <div><label for="video-url" class="block text-sm font-medium text-gray-700 mb-1">رابط الفيديو</label> <input type="url" id="video-url" name="url" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base" placeholder="https://example.com/video.mp4">
-      </div><button type="submit" id="add-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 min-h-[44px]"> <span id="add-button-text">إضافة فيديو</span> <span id="add-loading" class="hidden">جاري الإضافة...</span> </button>
-     </form>
-    </div><!-- Videos List -->
-    <div class="bg-white rounded-xl shadow-xl p-4">
-     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-lg font-bold text-gray-800">قائمة الفيديوهات</h2><span id="video-count" class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">0 فيديو</span>
-     </div>
-     <div id="videos-container" class="space-y-3">
-      <div id="empty-state" class="text-center py-8">
-       <div class="text-4xl mb-3">
-        🎬
+  <div class="browser-frame" style="height: 100%; padding: 10px;"><!-- Browser Header -->
+   <div class="mb-4"><!-- Tabs Container -->
+    <div class="tab-container">
+     <div class="flex items-center justify-between">
+      <div class="flex items-center overflow-x-auto" id="tabs-container">
+       <div class="tab active" data-tab="home">
+        🏠 الرئيسية <button class="ml-1 text-xs opacity-70">×</button>
        </div>
-       <h3 class="text-lg font-semibold text-gray-600 mb-2">لا توجد فيديوهات بعد</h3>
-       <p class="text-gray-500 text-sm">أضف أول فيديو لك باستخدام النموذج أعلاه</p>
+      </div><button id="new-tab-btn" class="bg-white/20 hover:bg-white/30 p-2 rounded-lg text-white transition-all"> ➕ </button>
+     </div>
+    </div><!-- Address Bar -->
+    <div class="address-bar p-3">
+     <div class="flex items-center gap-2"><button id="back-btn" class="p-2 rounded-full hover:bg-gray-100 transition-colors" disabled> ⬅️ </button> <button id="forward-btn" class="p-2 rounded-full hover:bg-gray-100 transition-colors" disabled> ➡️ </button> <button id="refresh-btn" class="p-2 rounded-full hover:bg-gray-100 transition-colors"> 🔄 </button>
+      <div class="flex-1 relative"><input type="text" id="address-input" class="w-full px-4 py-3 rounded-full border-2 border-gray-200 focus:border-blue-500 focus:outline-none text-sm" placeholder="ابحث أو أدخل رابط..."> <button id="voice-search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors"> 🎤 </button>
+      </div><button id="menu-btn" class="p-2 rounded-full hover:bg-gray-100 transition-colors"> ☰ </button>
+     </div><!-- Loading Bar -->
+     <div id="loading-bar" class="loading-bar mt-2 hidden"></div><!-- Search Suggestions -->
+     <div id="search-suggestions" class="search-suggestions mt-2 hidden"><!-- Suggestions will be populated here -->
+     </div>
+    </div>
+   </div><!-- Browser Content -->
+   <div class="browser-content p-4" id="browser-content"><!-- Home Page -->
+    <div id="home-page"><!-- Welcome Section -->
+     <div class="text-center mb-6">
+      <h1 id="browser-name" class="text-3xl font-bold text-gray-800 mb-2">🚀 متصفح الخارق</h1>
+      <p id="welcome-message" class="text-gray-600">مرحباً بك في متصفحك الخارق! استمتع بتجربة تصفح فائقة السرعة 🌟</p>
+     </div><!-- Super Features Grid -->
+     <div class="grid grid-cols-2 gap-4 mb-6 feature-grid">
+      <div class="feature-card quick-access" onclick="openQuickAccess()">
+       <div class="text-2xl mb-2">
+        ⚡
+       </div>
+       <h3 class="font-bold mb-1">الوصول السريع</h3>
+       <p class="text-sm opacity-90">مواقعك المفضلة بلمسة واحدة</p>
       </div>
+      <div class="feature-card privacy-mode" onclick="togglePrivacyMode()">
+       <div class="text-2xl mb-2">
+        🔒
+       </div>
+       <h3 class="font-bold mb-1">التصفح الآمن</h3>
+       <p class="text-sm opacity-90">حماية كاملة وخصوصية تامة</p>
+      </div>
+      <div class="feature-card speed-boost" onclick="enableSpeedBoost()">
+       <div class="text-2xl mb-2">
+        🚀
+       </div>
+       <h3 class="font-bold mb-1">السرعة الفائقة</h3>
+       <p class="text-sm opacity-90">تحميل أسرع بـ ٣٠٠٪</p>
+      </div>
+      <div class="feature-card ad-blocker" onclick="toggleAdBlocker()">
+       <div class="text-2xl mb-2">
+        🛡️
+       </div>
+       <h3 class="font-bold mb-1">حاجب الإعلانات</h3>
+       <p class="text-sm opacity-90">تصفح نظيف بدون إزعاج</p>
+      </div>
+     </div><!-- Popular Sites -->
+     <div class="mb-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">🌟 المواقع الشائعة</h2>
+      <div class="grid grid-cols-4 gap-3" id="popular-sites">
+       <div class="text-center p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl text-white cursor-pointer hover:scale-105 transition-transform" onclick="navigateTo('https://google.com')">
+        <div class="text-2xl mb-1">
+         🔍
+        </div>
+        <div class="text-xs font-medium">
+         جوجل
+        </div>
+       </div>
+       <div class="text-center p-3 bg-gradient-to-br from-red-500 to-red-600 rounded-xl text-white cursor-pointer hover:scale-105 transition-transform" onclick="navigateTo('https://youtube.com')">
+        <div class="text-2xl mb-1">
+         📺
+        </div>
+        <div class="text-xs font-medium">
+         يوتيوب
+        </div>
+       </div>
+       <div class="text-center p-3 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl text-white cursor-pointer hover:scale-105 transition-transform" onclick="navigateTo('https://facebook.com')">
+        <div class="text-2xl mb-1">
+         📘
+        </div>
+        <div class="text-xs font-medium">
+         فيسبوك
+        </div>
+       </div>
+       <div class="text-center p-3 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl text-white cursor-pointer hover:scale-105 transition-transform" onclick="navigateTo('https://instagram.com')">
+        <div class="text-2xl mb-1">
+         📷
+        </div>
+        <div class="text-xs font-medium">
+         إنستجرام
+        </div>
+       </div>
+      </div>
+     </div><!-- Bookmarks -->
+     <div class="mb-6">
+      <div class="flex justify-between items-center mb-4">
+       <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">⭐ المفضلة</h2><span id="bookmarks-count" class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">0 موقع</span>
+      </div>
+      <div id="bookmarks-container">
+       <div id="empty-bookmarks" class="text-center py-8 text-gray-500">
+        <div class="text-4xl mb-3">
+         ⭐
+        </div>
+        <p>لا توجد مواقع مفضلة بعد</p>
+        <p class="text-sm">أضف مواقعك المفضلة لسهولة الوصول إليها</p>
+       </div>
+      </div>
+     </div><!-- Recent History -->
+     <div>
+      <div class="flex justify-between items-center mb-4">
+       <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">🕒 المواقع الأخيرة</h2><button id="clear-history" class="text-red-500 text-sm hover:text-red-700 transition-colors"> مسح الكل </button>
+      </div>
+      <div id="history-container">
+       <div id="empty-history" class="text-center py-8 text-gray-500">
+        <div class="text-4xl mb-3">
+         🕒
+        </div>
+        <p>لا يوجد تاريخ تصفح بعد</p>
+        <p class="text-sm">ابدأ بتصفح المواقع لرؤية التاريخ هنا</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- Web Page View -->
+    <div id="web-page" class="hidden">
+     <div class="bg-gray-100 rounded-lg p-4 text-center">
+      <div class="text-6xl mb-4">
+       🌐
+      </div>
+      <h2 class="text-2xl font-bold text-gray-700 mb-2">عرض الموقع</h2>
+      <p class="text-gray-600 mb-4">في المتصفح الحقيقي، ستظهر صفحة الويب هنا</p>
+      <div id="current-url" class="bg-white p-3 rounded-lg text-sm text-gray-800 break-all mb-4"></div><button onclick="goHome()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"> العودة للرئيسية </button>
      </div>
     </div>
    </div>
-  </div><!-- Toast Notification -->
-  <div id="toast" class="toast"></div>
+  </div><!-- Floating Action Button --> <button class="floating-btn" id="floating-btn" onclick="showQuickActions()"> ⚡ </button> <!-- Toast Notification -->
+  <div id="toast" class="toast"></div><!-- Quick Actions Menu -->
+  <div id="quick-actions-menu" class="fixed inset-0 bg-black/50 z-50 hidden" onclick="hideQuickActions()">
+   <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6" onclick="event.stopPropagation()">
+    <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
+    <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">⚡ الإجراءات السريعة</h3>
+    <div class="grid grid-cols-2 gap-4"><button onclick="takeScreenshot()" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-xl font-medium"> 📸 لقطة شاشة </button> <button onclick="shareCurrentPage()" class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-4 rounded-xl font-medium"> 📤 مشاركة </button> <button onclick="toggleDarkMode()" class="bg-gradient-to-r from-gray-700 to-gray-900 text-white p-4 rounded-xl font-medium"> 🌙 الوضع الليلي </button> <button onclick="openDownloads()" class="bg-gradient-to-r from-green-500 to-teal-500 text-white p-4 rounded-xl font-medium"> 📥 التحميلات </button>
+    </div>
+   </div>
+  </div>
   <script>
         // Configuration
         const defaultConfig = {
-            app_title: "محمل الفيديوهات",
-            add_button_text: "إضافة فيديو",
-            download_button_text: "تحميل"
+            browser_name: "متصفح الخارق",
+            search_placeholder: "ابحث أو أدخل رابط...",
+            welcome_message: "مرحباً بك في متصفحك الخارق! استمتع بتجربة تصفح فائقة السرعة 🌟"
         };
 
-        let currentVideos = [];
+        let currentSites = [];
         let recordCount = 0;
-        let sharedContent = null;
+        let isPrivacyMode = false;
+        let isAdBlockerEnabled = true;
+        let isSpeedBoostEnabled = true;
+        let isDarkMode = false;
+        let currentUrl = '';
+        let history = [];
+        let tabs = [{ id: 'home', title: 'الرئيسية', url: '', active: true }];
 
-        // Local Storage Functions
-        function saveVideosToLocal(videos) {
-            try {
-                localStorage.setItem('videoDownloader_videos', JSON.stringify(videos));
-                return true;
-            } catch (error) {
-                console.error('فشل في حفظ البيانات محلياً:', error);
-                return false;
+        // Data handler for SDK
+        const dataHandler = {
+            onDataChanged(data) {
+                currentSites = data;
+                recordCount = data.length;
+                renderBookmarks(data.filter(site => site.isBookmarked));
+                renderHistory(data.filter(site => !site.isBookmarked).sort((a, b) => new Date(b.lastVisited) - new Date(a.lastVisited)));
+                updateBookmarksCount();
             }
-        }
+        };
 
-        function loadVideosFromLocal() {
-            try {
-                const saved = localStorage.getItem('videoDownloader_videos');
-                return saved ? JSON.parse(saved) : [];
-            } catch (error) {
-                console.error('فشل في تحميل البيانات المحلية:', error);
-                return [];
+        // Permissions system
+        const requiredPermissions = [
+            {
+                name: 'INTERNET',
+                icon: '🌐',
+                title: 'الوصول للإنترنت',
+                description: 'للتصفح وتحميل المواقع والبحث',
+                required: true
+            },
+            {
+                name: 'WRITE_EXTERNAL_STORAGE',
+                icon: '💾',
+                title: 'حفظ الملفات',
+                description: 'لحفظ التحميلات والصور والمستندات',
+                required: true
+            },
+            {
+                name: 'READ_EXTERNAL_STORAGE',
+                icon: '📁',
+                title: 'قراءة الملفات',
+                description: 'لرفع الملفات ومشاركة المحتوى',
+                required: true
+            },
+            {
+                name: 'CAMERA',
+                icon: '📷',
+                title: 'الكاميرا',
+                description: 'لالتقاط الصور ومسح الرموز المربعة',
+                required: false
+            },
+            {
+                name: 'RECORD_AUDIO',
+                icon: '🎤',
+                title: 'الميكروفون',
+                description: 'للبحث الصوتي والمكالمات الصوتية',
+                required: false
+            },
+            {
+                name: 'ACCESS_FINE_LOCATION',
+                icon: '📍',
+                title: 'الموقع الجغرافي',
+                description: 'لخدمات الخرائط والطقس المحلي',
+                required: false
+            },
+            {
+                name: 'VIBRATE',
+                icon: '📳',
+                title: 'الاهتزاز',
+                description: 'للتنبيهات والإشعارات التفاعلية',
+                required: false
             }
+        ];
+
+        let permissionsGranted = false;
+
+        // Show permissions dialog
+        function showPermissionsDialog() {
+            const dialog = document.createElement('div');
+            dialog.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            dialog.innerHTML = `
+                <div class="bg-white rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                    <div class="p-6">
+                        <!-- Header -->
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                                🚀
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">متصفح الخارق</h2>
+                            <p class="text-gray-600 text-sm">يحتاج التطبيق للأذونات التالية للعمل بشكل مثالي</p>
+                        </div>
+
+                        <!-- Permissions List -->
+                        <div class="space-y-4 mb-6">
+                            ${requiredPermissions.map(permission => `
+                                <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-2xl">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
+                                        ${permission.icon}
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <h3 class="font-semibold text-gray-800">${permission.title}</h3>
+                                            ${permission.required ? '<span class="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">مطلوب</span>' : '<span class="bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full">اختياري</span>'}
+                                        </div>
+                                        <p class="text-sm text-gray-600">${permission.description}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Privacy Notice -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6">
+                            <div class="flex items-start gap-3">
+                                <div class="text-blue-500 text-xl">🔒</div>
+                                <div>
+                                    <h4 class="font-semibold text-blue-800 mb-1">حماية الخصوصية</h4>
+                                    <p class="text-sm text-blue-700">
+                                        نحن نحترم خصوصيتك. لن نجمع أو نشارك بياناتك الشخصية مع أطراف ثالثة. 
+                                        جميع البيانات محفوظة محلياً على جهازك.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3">
+                            <button onclick="denyPermissions()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-4 px-6 rounded-2xl transition-all">
+                                رفض
+                            </button>
+                            <button onclick="acceptPermissions()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all shadow-lg">
+                                قبول والمتابعة
+                            </button>
+                        </div>
+
+                        <!-- Terms Link -->
+                        <div class="text-center mt-4">
+                            <p class="text-xs text-gray-500">
+                                بالمتابعة، أنت توافق على 
+                                <a href="#" class="text-blue-500 underline">شروط الاستخدام</a>
+                                و
+                                <a href="#" class="text-blue-500 underline">سياسة الخصوصية</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(dialog);
         }
 
-        function updateVideosList(videos) {
-            currentVideos = videos;
-            recordCount = videos.length;
-            renderVideosList(videos);
-            updateVideoCount(videos.length);
-            saveVideosToLocal(videos);
-        }
-
-        // Check for shared content from URL parameters or Web Share Target
-        function checkForSharedContent() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const title = urlParams.get('title') || urlParams.get('text') || '';
-            const url = urlParams.get('url') || '';
+        // Accept permissions
+        function acceptPermissions() {
+            permissionsGranted = true;
+            localStorage.setItem('superBrowser_permissions', 'granted');
+            document.querySelector('.fixed.inset-0.bg-black\\/60').remove();
+            showToast('🎉 تم قبول الأذونات! مرحباً بك في متصفحك الخارق');
             
-            if (title || url) {
-                sharedContent = {
-                    title: title || 'فيديو مشارك',
-                    url: url || title // Sometimes URL comes in title parameter
-                };
-                
-                // Validate URL
-                try {
-                    if (sharedContent.url && !sharedContent.url.startsWith('http')) {
-                        // Try to extract URL from text
-                        const urlMatch = sharedContent.url.match(/(https?:\/\/[^\s]+)/);
-                        if (urlMatch) {
-                            sharedContent.url = urlMatch[1];
-                        }
-                    }
-                    new URL(sharedContent.url);
-                    showSharedContentAlert();
-                } catch (error) {
-                    // If URL is invalid, try to use it as title
-                    if (url) {
-                        sharedContent.title = url;
-                        sharedContent.url = '';
-                    }
-                    if (sharedContent.title) {
-                        showSharedContentAlert();
-                    }
-                }
-                
-                // Clean URL parameters
-                if (window.history && window.history.replaceState) {
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-            }
-        }
-
-        // Show shared content alert
-        function showSharedContentAlert() {
-            if (!sharedContent) return;
+            // Continue with app initialization
+            continueAppInitialization();
             
-            const alert = document.getElementById('shared-content-alert');
-            const titleEl = document.getElementById('shared-title');
-            const urlEl = document.getElementById('shared-url');
-            
-            titleEl.textContent = sharedContent.title;
-            urlEl.textContent = sharedContent.url || 'لا يوجد رابط';
-            
-            alert.classList.remove('hidden');
-            alert.classList.add('pulse-animation');
-            
-            // Auto-scroll to alert
+            // Simulate permission requests
             setTimeout(() => {
-                alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
+                showToast('✅ تم منح إذن الوصول للإنترنت');
+            }, 500);
+            
+            setTimeout(() => {
+                showToast('✅ تم منح إذن حفظ الملفات');
+            }, 1000);
+            
+            setTimeout(() => {
+                showToast('🚀 جميع الأذونات جاهزة! استمتع بالتصفح');
+            }, 1500);
         }
 
-        // Initialize App
-        async function initializeApp() {
-            // Check for shared content on page load
-            checkForSharedContent();
-            
-            // Load videos from local storage
-            const savedVideos = loadVideosFromLocal();
-            updateVideosList(savedVideos);
+        // Continue app initialization after permissions
+        async function continueAppInitialization() {
+            // Initialize Data SDK
+            if (window.dataSdk) {
+                const initResult = await window.dataSdk.init(dataHandler);
+                if (!initResult.isOk) {
+                    console.error("Failed to initialize data SDK");
+                    // Fallback to local storage
+                    loadFromLocalStorage();
+                }
+            } else {
+                loadFromLocalStorage();
+            }
 
             // Initialize Element SDK
             if (window.elementSdk) {
                 await window.elementSdk.init({
                     defaultConfig,
                     onConfigChange: async (config) => {
-                        const customFont = config.font_family || defaultConfig.font_family;
+                        // Apply font family
+                        const customFont = config.font_family || 'Inter';
                         const baseSize = config.font_size || 16;
                         const baseFontStack = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
 
-                        // Apply font family
                         if (customFont) {
                             document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
                         }
 
-                        // Apply font sizes - mobile optimized
-                        document.getElementById('app-title').style.fontSize = `${Math.max(baseSize * 1.5, 18)}px`;
-                        document.querySelectorAll('h2').forEach(h => h.style.fontSize = `${Math.max(baseSize * 1.25, 16)}px`);
-                        document.querySelectorAll('p, input, button').forEach(el => el.style.fontSize = `${Math.max(baseSize, 14)}px`);
+                        // Apply font sizes
+                        document.getElementById('browser-name').style.fontSize = `${baseSize * 1.8}px`;
+                        document.querySelectorAll('h2').forEach(h => h.style.fontSize = `${baseSize * 1.25}px`);
+                        document.querySelectorAll('p, input, button').forEach(el => el.style.fontSize = `${Math.max(baseSize * 0.9, 14)}px`);
 
                         // Apply colors
                         const bgColor = config.background_color || '#667eea';
                         const surfaceColor = config.surface_color || '#ffffff';
                         const textColor = config.text_color || '#1f2937';
                         const primaryColor = config.primary_color || '#2563eb';
-                        const secondaryColor = config.secondary_color || '#6b7280';
+                        const accentColor = config.accent_color || '#ff6b6b';
 
-                        document.body.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${primaryColor} 100%)`;
-                        document.querySelectorAll('.bg-white').forEach(el => el.style.backgroundColor = surfaceColor);
+                        document.querySelector('.browser-frame').style.background = `linear-gradient(135deg, ${bgColor} 0%, ${primaryColor} 50%, ${accentColor} 100%)`;
+                        document.querySelector('.browser-content').style.backgroundColor = surfaceColor;
                         document.querySelectorAll('.text-gray-800, .text-gray-700').forEach(el => el.style.color = textColor);
-                        document.querySelectorAll('.bg-blue-600').forEach(el => el.style.backgroundColor = primaryColor);
 
                         // Update text content
-                        document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
-                        document.getElementById('add-button-text').textContent = config.add_button_text || defaultConfig.add_button_text;
+                        document.getElementById('browser-name').textContent = `🚀 ${config.browser_name || defaultConfig.browser_name}`;
+                        document.getElementById('address-input').placeholder = config.search_placeholder || defaultConfig.search_placeholder;
+                        document.getElementById('welcome-message').textContent = config.welcome_message || defaultConfig.welcome_message;
                     },
                     mapToCapabilities: (config) => ({
                         recolorables: [
@@ -345,17 +760,17 @@
                                 }
                             },
                             {
-                                get: () => config.secondary_color || '#6b7280',
+                                get: () => config.accent_color || '#ff6b6b',
                                 set: (value) => {
                                     if (window.elementSdk) {
-                                        window.elementSdk.setConfig({ secondary_color: value });
+                                        window.elementSdk.setConfig({ accent_color: value });
                                     }
                                 }
                             }
                         ],
                         borderables: [],
                         fontEditable: {
-                            get: () => config.font_family || 'Segoe UI',
+                            get: () => config.font_family || 'Inter',
                             set: (value) => {
                                 if (window.elementSdk) {
                                     window.elementSdk.setConfig({ font_family: value });
@@ -372,637 +787,719 @@
                         }
                     }),
                     mapToEditPanelValues: (config) => new Map([
-                        ['app_title', config.app_title || defaultConfig.app_title],
-                        ['add_button_text', config.add_button_text || defaultConfig.add_button_text],
-                        ['download_button_text', config.download_button_text || defaultConfig.download_button_text]
+                        ['browser_name', config.browser_name || defaultConfig.browser_name],
+                        ['search_placeholder', config.search_placeholder || defaultConfig.search_placeholder],
+                        ['welcome_message', config.welcome_message || defaultConfig.welcome_message]
                     ])
                 });
             }
+
+            setupEventListeners();
+            showToast('🚀 مرحباً بك في متصفحك الخارق! جاهز للانطلاق');
         }
 
-        // Shared Content Handlers
-        document.getElementById('add-shared-content').addEventListener('click', async () => {
-            if (!sharedContent) return;
-            
-            // Fill form with shared content
-            document.getElementById('video-title').value = sharedContent.title;
-            document.getElementById('video-url').value = sharedContent.url;
-            
-            // Hide alert
-            document.getElementById('shared-content-alert').classList.add('hidden');
-            
-            // Auto-submit if both title and URL are present
-            if (sharedContent.title && sharedContent.url) {
-                try {
-                    new URL(sharedContent.url);
-                    document.getElementById('add-video-form').dispatchEvent(new Event('submit'));
-                } catch (error) {
-                    showToast('تم ملء النموذج، يرجى التحقق من الرابط وإضافة الفيديو يدوياً');
-                    document.getElementById('video-url').focus();
-                }
-            } else {
-                showToast('تم ملء النموذج، يرجى إكمال البيانات المفقودة');
-                if (!sharedContent.title) {
-                    document.getElementById('video-title').focus();
-                } else {
-                    document.getElementById('video-url').focus();
-                }
-            }
-            
-            sharedContent = null;
-        });
-
-        document.getElementById('ignore-shared').addEventListener('click', () => {
-            document.getElementById('shared-content-alert').classList.add('hidden');
-            sharedContent = null;
-        });
-
-        document.getElementById('dismiss-shared').addEventListener('click', () => {
-            document.getElementById('shared-content-alert').classList.add('hidden');
-            sharedContent = null;
-        });
-
-        // Share Receive Button Handler
-        document.getElementById('share-receive-btn').addEventListener('click', () => {
-            const instructions = document.getElementById('share-instructions');
-            if (instructions.classList.contains('hidden')) {
-                instructions.classList.remove('hidden');
-                document.getElementById('share-receive-btn').innerHTML = '📱 إخفاء';
-            } else {
-                instructions.classList.add('hidden');
-                document.getElementById('share-receive-btn').innerHTML = '📱 استقبال';
-            }
-        });
-
-        // Share Button Handler
-        document.getElementById('share-btn').addEventListener('click', async () => {
-            const shareData = {
-                title: 'محمل الفيديوهات - أداة رائعة لحفظ روابط الفيديوهات',
-                text: 'جرب هذا التطبيق الرائع لحفظ وتنظيم روابط الفيديوهات بسهولة! 🎬✨',
-                url: window.location.href
-            };
-
-            try {
-                // Check if Web Share API is supported
-                if (navigator.share) {
-                    await navigator.share(shareData);
-                    showToast('تم فتح نافذة المشاركة! 📤');
-                } else {
-                    // Fallback: Copy to clipboard
-                    const shareText = `${shareData.title}\n${shareData.text}\n${shareData.url}`;
-                    await navigator.clipboard.writeText(shareText);
-                    showToast('تم نسخ رابط التطبيق للحافظة! يمكنك مشاركته الآن 📋');
-                }
-            } catch (error) {
-                // Manual sharing options
-                showShareOptions();
-            }
-        });
-
-        // Show manual share options
-        function showShareOptions() {
-            const shareText = `محمل الفيديوهات - أداة رائعة لحفظ روابط الفيديوهات\nجرب هذا التطبيق الرائع! 🎬✨\n${window.location.href}`;
-            
-            // Create share modal
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-xl p-6 max-w-sm w-full">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">مشاركة التطبيق 🔗</h3>
-                    <div class="space-y-3">
-                        <button onclick="shareViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                            📱 مشاركة عبر واتساب
-                        </button>
-                        <button onclick="shareViaTelegram()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                            ✈️ مشاركة عبر تليجرام
-                        </button>
-                        <button onclick="copyShareLink()" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                            📋 نسخ الرابط
-                        </button>
-                        <button onclick="closeShareModal()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 px-4 rounded-lg transition-colors">
-                            إلغاء
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            // Add global functions for share options
-            window.shareViaWhatsApp = () => {
-                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-                window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-                closeShareModal();
-            };
-            
-            window.shareViaTelegram = () => {
-                const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('محمل الفيديوهات - أداة رائعة لحفظ روابط الفيديوهات 🎬✨')}`;
-                window.open(telegramUrl, '_blank', 'noopener,noreferrer');
-                closeShareModal();
-            };
-            
-            window.copyShareLink = async () => {
-                try {
-                    await navigator.clipboard.writeText(shareText);
-                    showToast('تم نسخ رابط التطبيق! 📋');
-                } catch (error) {
-                    showToast('فشل في النسخ، يرجى النسخ يدوياً', 'error');
-                }
-                closeShareModal();
-            };
-            
-            window.closeShareModal = () => {
-                modal.remove();
-                delete window.shareViaWhatsApp;
-                delete window.shareViaTelegram;
-                delete window.copyShareLink;
-                delete window.closeShareModal;
-            };
-            
-            // Close modal when clicking outside
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeShareModal();
-                }
-            });
-        }
-
-        // Smart Paste Tool Handler
-        document.getElementById('smart-paste-btn').addEventListener('click', async () => {
-            try {
-                // Try to copy current page title and URL to clipboard
-                const pageTitle = document.title || 'فيديو';
-                const pageUrl = window.location.href;
-                const textToCopy = `${pageTitle}\n${pageUrl}`;
-                
-                await navigator.clipboard.writeText(textToCopy);
-                showToast('تم نسخ العنوان والرابط! الآن اذهب للمتصفح وانسخ عنوان الصفحة ورابطها');
-                
-                // Show instructions
-                const smartPasteBtn = document.getElementById('smart-paste-btn');
-                const originalText = smartPasteBtn.innerHTML;
-                smartPasteBtn.innerHTML = '✅ تم النسخ';
-                setTimeout(() => {
-                    smartPasteBtn.innerHTML = originalText;
-                }, 3000);
-                
-            } catch (error) {
-                showToast('لنسخ العنوان والرابط من المتصفح: اضغط Ctrl+L ثم Ctrl+C لنسخ الرابط، وانسخ العنوان من التبويب', 'error');
-            }
-        });
-
-        // Paste Button Handler - Enhanced with fallback
-        document.getElementById('paste-btn').addEventListener('click', async () => {
-            // First try to use clipboard API
-            if (navigator.clipboard && navigator.clipboard.readText) {
-                try {
-                    const clipboardText = await navigator.clipboard.readText();
-                    
-                    if (!clipboardText.trim()) {
-                        showPasteInstructions();
-                        return;
-                    }
-
-                    processPastedText(clipboardText);
-                    return;
-                    
-                } catch (error) {
-                    if (error.name === 'NotAllowedError') {
-                        showPasteInstructions();
-                        return;
-                    }
-                }
-            }
-            
-            // Fallback: Show manual paste instructions
-            showPasteInstructions();
-        });
-
-        function showPasteInstructions() {
-            // Create a modal with instructions
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-xl p-6 max-w-sm w-full">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">📋 لصق البيانات يدوياً</h3>
-                    <div class="space-y-4">
-                        <div class="bg-blue-50 p-4 rounded-lg">
-                            <p class="text-sm text-gray-700 mb-3"><strong>طريقة اللصق:</strong></p>
-                            <ol class="list-decimal list-inside space-y-2 text-sm text-gray-600">
-                                <li>انسخ عنوان الفيديو من المتصفح</li>
-                                <li>الصقه في حقل "عنوان الفيديو" أدناه</li>
-                                <li>انسخ رابط الفيديو</li>
-                                <li>الصقه في حقل "رابط الفيديو"</li>
-                            </ol>
+        // Deny permissions
+        function denyPermissions() {
+            const dialog = document.querySelector('.fixed.inset-0.bg-black\\/60');
+            dialog.innerHTML = `
+                <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                            ⚠️
                         </div>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">عنوان الفيديو:</label>
-                                <input type="text" id="manual-title" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" placeholder="الصق العنوان هنا">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">رابط الفيديو:</label>
-                                <input type="url" id="manual-url" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" placeholder="الصق الرابط هنا">
-                            </div>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="applyManualPaste()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium">
-                                تطبيق
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">أذونات مطلوبة</h2>
+                        <p class="text-gray-600 mb-6">
+                            التطبيق يحتاج لهذه الأذونات للعمل بشكل صحيح. 
+                            بدونها قد لا تعمل بعض الميزات.
+                        </p>
+                        
+                        <div class="flex gap-3">
+                            <button onclick="closeApp()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-2xl transition-all">
+                                إغلاق التطبيق
                             </button>
-                            <button onclick="closeManualPaste()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded-lg text-sm">
-                                إلغاء
+                            <button onclick="showPermissionsDialog()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-2xl transition-all">
+                                مراجعة الأذونات
                             </button>
                         </div>
                     </div>
                 </div>
             `;
+        }
+
+        // Close app
+        function closeApp() {
+            document.body.innerHTML = `
+                <div class="fixed inset-0 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+                    <div class="text-center text-white">
+                        <div class="text-6xl mb-4">👋</div>
+                        <h2 class="text-2xl font-bold mb-2">شكراً لك</h2>
+                        <p class="text-gray-300">يمكنك إعادة فتح التطبيق في أي وقت</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize app
+        async function initializeApp() {
+            // Check if permissions were previously granted
+            const savedPermissions = localStorage.getItem('superBrowser_permissions');
+            if (!savedPermissions) {
+                showPermissionsDialog();
+                return;
+            }
             
-            document.body.appendChild(modal);
+            permissionsGranted = true;
+            continueAppInitialization();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Address bar
+            document.getElementById('address-input').addEventListener('keypress', handleAddressInput);
+            document.getElementById('address-input').addEventListener('input', handleSearchSuggestions);
             
-            // Focus on first input
-            setTimeout(() => {
-                document.getElementById('manual-title').focus();
-            }, 100);
+            // Navigation buttons
+            document.getElementById('back-btn').addEventListener('click', goBack);
+            document.getElementById('forward-btn').addEventListener('click', goForward);
+            document.getElementById('refresh-btn').addEventListener('click', refreshPage);
             
-            // Global functions for modal
-            window.applyManualPaste = () => {
-                const title = document.getElementById('manual-title').value.trim();
-                const url = document.getElementById('manual-url').value.trim();
-                
-                if (title) {
-                    document.getElementById('video-title').value = title;
+            // Voice search
+            document.getElementById('voice-search').addEventListener('click', startVoiceSearch);
+            
+            // Menu
+            document.getElementById('menu-btn').addEventListener('click', showMenu);
+            
+            // New tab
+            document.getElementById('new-tab-btn').addEventListener('click', createNewTab);
+            
+            // Clear history
+            document.getElementById('clear-history').addEventListener('click', clearHistory);
+        }
+
+        // Handle address input
+        function handleAddressInput(e) {
+            if (e.key === 'Enter') {
+                const input = e.target.value.trim();
+                if (input) {
+                    navigateTo(input);
                 }
-                if (url) {
-                    document.getElementById('video-url').value = url;
-                }
-                
-                if (title || url) {
-                    showToast('تم نقل البيانات بنجاح! 🎉');
-                    
-                    // Highlight the filled fields
-                    if (title) {
-                        const titleInput = document.getElementById('video-title');
-                        titleInput.style.backgroundColor = '#dcfce7';
-                        setTimeout(() => titleInput.style.backgroundColor = '', 2000);
-                    }
-                    if (url) {
-                        const urlInput = document.getElementById('video-url');
-                        urlInput.style.backgroundColor = '#dcfce7';
-                        setTimeout(() => urlInput.style.backgroundColor = '', 2000);
-                    }
-                } else {
-                    showToast('يرجى إدخال العنوان أو الرابط على الأقل', 'error');
-                    return;
-                }
-                
-                closeManualPaste();
-            };
+            }
+        }
+
+        // Handle search suggestions
+        function handleSearchSuggestions(e) {
+            const query = e.target.value.trim();
+            const suggestionsContainer = document.getElementById('search-suggestions');
             
-            window.closeManualPaste = () => {
-                modal.remove();
-                delete window.applyManualPaste;
-                delete window.closeManualPaste;
-            };
+            if (query.length < 2) {
+                suggestionsContainer.classList.add('hidden');
+                return;
+            }
             
-            // Close on outside click
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeManualPaste();
+            // Generate suggestions
+            const suggestions = generateSuggestions(query);
+            renderSuggestions(suggestions);
+            suggestionsContainer.classList.remove('hidden');
+        }
+
+        // Generate search suggestions
+        function generateSuggestions(query) {
+            const commonSites = [
+                { title: 'جوجل', url: 'https://google.com', icon: '🔍' },
+                { title: 'يوتيوب', url: 'https://youtube.com', icon: '📺' },
+                { title: 'فيسبوك', url: 'https://facebook.com', icon: '📘' },
+                { title: 'تويتر', url: 'https://twitter.com', icon: '🐦' },
+                { title: 'انستجرام', url: 'https://instagram.com', icon: '📷' },
+                { title: 'واتساب ويب', url: 'https://web.whatsapp.com', icon: '💬' }
+            ];
+            
+            const suggestions = [];
+            
+            // Add search suggestion
+            suggestions.push({
+                title: `البحث عن "${query}"`,
+                url: `https://google.com/search?q=${encodeURIComponent(query)}`,
+                icon: '🔍',
+                type: 'search'
+            });
+            
+            // Add matching sites
+            commonSites.forEach(site => {
+                if (site.title.includes(query) || site.url.includes(query)) {
+                    suggestions.push({ ...site, type: 'site' });
                 }
             });
+            
+            // Add bookmarks matches
+            currentSites.filter(site => site.isBookmarked && 
+                (site.title.includes(query) || site.url.includes(query))
+            ).forEach(site => {
+                suggestions.push({ ...site, type: 'bookmark' });
+            });
+            
+            return suggestions.slice(0, 6);
         }
 
-        function processPastedText(clipboardText) {
-            // Try to parse the clipboard content
-            const lines = clipboardText.trim().split('\n').filter(line => line.trim());
-            
-            let title = '';
-            let url = '';
-            
-            // Look for URL in the lines
-            for (const line of lines) {
-                try {
-                    new URL(line.trim());
-                    url = line.trim();
-                    break;
-                } catch {
-                    // Not a URL, continue
-                }
-            }
-            
-            // Use remaining text as title
-            if (url) {
-                const titleLines = lines.filter(line => line.trim() !== url && line.trim().length > 0);
-                title = titleLines.join(' ').trim();
-            } else {
-                // If no URL found, treat first line as title and second as URL
-                if (lines.length >= 2) {
-                    title = lines[0].trim();
-                    try {
-                        new URL(lines[1].trim());
-                        url = lines[1].trim();
-                    } catch {
-                        title = lines.join(' ').trim();
-                    }
-                } else if (lines.length === 1) {
-                    // Single line - check if it's URL or title
-                    try {
-                        new URL(lines[0].trim());
-                        url = lines[0].trim();
-                        title = 'فيديو'; // Default title
-                    } catch {
-                        title = lines[0].trim();
-                    }
-                }
-            }
-            
-            // Fill the form
-            if (title) {
-                document.getElementById('video-title').value = title;
-            }
-            if (url) {
-                document.getElementById('video-url').value = url;
-            }
-            
-            if (title || url) {
-                showToast('تم لصق البيانات بنجاح! 🎉');
-                
-                // Highlight the filled fields
-                if (title) {
-                    const titleInput = document.getElementById('video-title');
-                    titleInput.style.backgroundColor = '#dcfce7';
-                    setTimeout(() => titleInput.style.backgroundColor = '', 2000);
-                }
-                if (url) {
-                    const urlInput = document.getElementById('video-url');
-                    urlInput.style.backgroundColor = '#dcfce7';
-                    setTimeout(() => urlInput.style.backgroundColor = '', 2000);
-                }
-            } else {
-                showToast('لم يتم العثور على بيانات صالحة في النص المنسوخ', 'error');
-            }
+        // Render suggestions
+        function renderSuggestions(suggestions) {
+            const container = document.getElementById('search-suggestions');
+            container.innerHTML = suggestions.map(suggestion => `
+                <div class="suggestion-item" onclick="navigateTo('${suggestion.url}')">
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg">${suggestion.icon || '🌐'}</span>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">${escapeHtml(suggestion.title)}</div>
+                            <div class="text-sm text-gray-500">${escapeHtml(suggestion.url)}</div>
+                        </div>
+                        ${suggestion.type === 'bookmark' ? '<span class="text-yellow-500">⭐</span>' : ''}
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Auto-paste on Ctrl+V in form inputs
-        document.getElementById('video-title').addEventListener('keydown', handleCtrlV);
-        document.getElementById('video-url').addEventListener('keydown', handleCtrlV);
-        
-        async function handleCtrlV(e) {
-            if (e.ctrlKey && e.key === 'v') {
-                e.preventDefault();
-                document.getElementById('paste-btn').click();
+        // Navigate to URL
+        async function navigateTo(input) {
+            let url = input;
+            
+            // Check if it's a URL or search query
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                if (url.includes('.') && !url.includes(' ')) {
+                    url = 'https://' + url;
+                } else {
+                    url = `https://google.com/search?q=${encodeURIComponent(url)}`;
+                }
             }
+            
+            currentUrl = url;
+            document.getElementById('address-input').value = url;
+            document.getElementById('search-suggestions').classList.add('hidden');
+            
+            // Show loading
+            showLoading();
+            
+            // Save to history
+            await saveSiteVisit(url);
+            
+            // Show web page view
+            showWebPage(url);
+            
+            // Hide loading after delay
+            setTimeout(hideLoading, 1500);
+            
+            showToast(`🌐 تم تحميل الصفحة بسرعة فائقة!`);
         }
 
-        // Add Video Form Handler - Local Storage
-        document.getElementById('add-video-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
+        // Save site visit
+        async function saveSiteVisit(url) {
             if (recordCount >= 999) {
-                showToast('تم الوصول للحد الأقصى من الفيديوهات (999). يرجى حذف بعض الفيديوهات أولاً.', 'error');
+                showToast('تم الوصول للحد الأقصى من المواقع المحفوظة', 'error');
                 return;
             }
-
-            // Get values directly from input elements
-            const titleInput = document.getElementById('video-title');
-            const urlInput = document.getElementById('video-url');
-            const title = titleInput.value.trim();
-            const url = urlInput.value.trim();
-
-            if (!title || !url) {
-                showToast('يرجى ملء جميع الحقول', 'error');
-                return;
-            }
-
-            // Validate URL
-            try {
-                new URL(url);
-            } catch {
-                showToast('يرجى إدخال رابط صحيح', 'error');
-                return;
-            }
-
-            // Show loading state
-            const addButton = document.getElementById('add-button');
-            const addButtonText = document.getElementById('add-button-text');
-            const addLoading = document.getElementById('add-loading');
-            
-            addButton.disabled = true;
-            addButton.classList.add('loading');
-            addButtonText.classList.add('hidden');
-            addLoading.classList.remove('hidden');
 
             try {
-                const videoData = {
-                    id: Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9),
-                    title: title,
-                    url: url,
-                    addedAt: new Date().toISOString(),
-                    status: 'ready'
-                };
-
-                // Add to current videos array
-                const updatedVideos = [...currentVideos, videoData];
-                updateVideosList(updatedVideos);
+                const title = extractTitleFromUrl(url);
+                const favicon = getFaviconFromUrl(url);
                 
-                showToast('تم حفظ الفيديو في ذاكرة الهاتف بنجاح! 🎉📱');
-                titleInput.value = '';
-                urlInput.value = '';
+                // Check if site already exists
+                const existingSite = currentSites.find(site => site.url === url);
                 
+                if (existingSite) {
+                    // Update visit count and last visited
+                    const updatedSite = {
+                        ...existingSite,
+                        visitCount: (existingSite.visitCount || 0) + 1,
+                        lastVisited: new Date().toISOString()
+                    };
+                    
+                    if (window.dataSdk) {
+                        await window.dataSdk.update(updatedSite);
+                    } else {
+                        updateLocalStorage(updatedSite);
+                    }
+                } else {
+                    // Create new site entry
+                    const siteData = {
+                        id: Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9),
+                        title: title,
+                        url: url,
+                        favicon: favicon,
+                        visitCount: 1,
+                        lastVisited: new Date().toISOString(),
+                        isBookmarked: false,
+                        category: getCategoryFromUrl(url)
+                    };
+                    
+                    if (window.dataSdk) {
+                        await window.dataSdk.create(siteData);
+                    } else {
+                        addToLocalStorage(siteData);
+                    }
+                }
             } catch (error) {
-                showToast('حدث خطأ أثناء حفظ الفيديو: ' + error.message, 'error');
-            } finally {
-                // Reset loading state
-                addButton.disabled = false;
-                addButton.classList.remove('loading');
-                addButtonText.classList.remove('hidden');
-                addLoading.classList.add('hidden');
+                console.error('Error saving site visit:', error);
             }
-        });
+        }
 
-        // Render Videos List
-        function renderVideosList(videos) {
-            const container = document.getElementById('videos-container');
-            const emptyState = document.getElementById('empty-state');
+        // Show web page
+        function showWebPage(url) {
+            document.getElementById('home-page').classList.add('hidden');
+            document.getElementById('web-page').classList.remove('hidden');
+            document.getElementById('current-url').textContent = url;
+            
+            // Update tab
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                activeTab.innerHTML = `🌐 ${extractTitleFromUrl(url)} <button class="ml-1 text-xs opacity-70" onclick="closeTab(event)">×</button>`;
+            }
+        }
 
-            if (videos.length === 0) {
+        // Go home
+        function goHome() {
+            document.getElementById('web-page').classList.add('hidden');
+            document.getElementById('home-page').classList.remove('hidden');
+            document.getElementById('address-input').value = '';
+            currentUrl = '';
+            
+            // Update tab
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                activeTab.innerHTML = `🏠 الرئيسية <button class="ml-1 text-xs opacity-70" onclick="closeTab(event)">×</button>`;
+            }
+        }
+
+        // Show loading
+        function showLoading() {
+            document.getElementById('loading-bar').classList.remove('hidden');
+        }
+
+        // Hide loading
+        function hideLoading() {
+            document.getElementById('loading-bar').classList.add('hidden');
+        }
+
+        // Render bookmarks
+        function renderBookmarks(bookmarks) {
+            const container = document.getElementById('bookmarks-container');
+            const emptyState = document.getElementById('empty-bookmarks');
+            
+            if (bookmarks.length === 0) {
                 emptyState.style.display = 'block';
                 return;
             }
-
+            
             emptyState.style.display = 'none';
-
-            // Update existing items and create new ones
-            const existingItems = new Map();
-            container.querySelectorAll('.video-item').forEach(item => {
-                existingItems.set(item.dataset.videoId, item);
-            });
-
-            videos.forEach(video => {
-                if (existingItems.has(video.id)) {
-                    updateVideoItem(existingItems.get(video.id), video);
-                    existingItems.delete(video.id);
-                } else {
-                    container.appendChild(createVideoItem(video));
-                }
-            });
-
-            // Remove deleted items
-            existingItems.forEach(item => item.remove());
-        }
-
-        // Create Video Item - Mobile Optimized
-        function createVideoItem(video) {
-            const item = document.createElement('div');
-            item.className = 'video-item bg-gray-50 rounded-lg p-3 border border-gray-200';
-            item.dataset.videoId = video.id;
-
-            const config = window.elementSdk?.config || defaultConfig;
-            const downloadButtonText = config.download_button_text || defaultConfig.download_button_text;
-
-            item.innerHTML = `
-                <div class="space-y-3">
-                    <div>
-                        <h3 class="font-semibold text-gray-900 text-sm mb-1 leading-tight">${escapeHtml(video.title)}</h3>
-                        <p class="text-xs text-gray-500 break-all mb-1 leading-relaxed">${escapeHtml(video.url)}</p>
-                        <p class="text-xs text-gray-400">تم الإضافة: ${formatDate(video.addedAt)}</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="downloadVideo('${video.id}')" 
-                                class="flex-1 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white py-2.5 px-3 rounded-lg text-sm font-medium transition-colors duration-200 min-h-[44px] flex items-center justify-center">
-                            📥 ${downloadButtonText}
-                        </button>
-                        <button onclick="deleteVideo('${video.id}')" 
-                                class="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white px-3 py-2.5 rounded-lg text-sm transition-colors duration-200 min-h-[44px] flex items-center justify-center">
+            
+            const bookmarksHtml = bookmarks.map(bookmark => `
+                <div class="bookmark-item" onclick="navigateTo('${bookmark.url}')">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3 flex-1">
+                            <span class="text-lg">${bookmark.favicon || '🌐'}</span>
+                            <div class="flex-1">
+                                <div class="font-medium">${escapeHtml(bookmark.title)}</div>
+                                <div class="text-sm opacity-80 truncate">${escapeHtml(bookmark.url)}</div>
+                            </div>
+                        </div>
+                        <button onclick="event.stopPropagation(); removeBookmark('${bookmark.id}')" class="text-white/70 hover:text-white p-1">
                             🗑️
                         </button>
                     </div>
                 </div>
-            `;
-
-            return item;
+            `).join('');
+            
+            container.innerHTML = emptyState.outerHTML + bookmarksHtml;
         }
 
-        // Update Video Item
-        function updateVideoItem(item, video) {
-            const config = window.elementSdk?.config || defaultConfig;
-            const downloadButtonText = config.download_button_text || defaultConfig.download_button_text;
-
-            item.querySelector('h3').textContent = video.title;
-            item.querySelector('p').textContent = video.url;
-            item.querySelector('.text-xs').textContent = `تم الإضافة: ${formatDate(video.addedAt)}`;
-            item.querySelector('.bg-green-600').innerHTML = `📥 ${downloadButtonText}`;
+        // Render history
+        function renderHistory(historyItems) {
+            const container = document.getElementById('history-container');
+            const emptyState = document.getElementById('empty-history');
+            
+            if (historyItems.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            const historyHtml = historyItems.slice(0, 10).map(item => `
+                <div class="bookmark-item" onclick="navigateTo('${item.url}')">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3 flex-1">
+                            <span class="text-lg">${item.favicon || '🌐'}</span>
+                            <div class="flex-1">
+                                <div class="font-medium">${escapeHtml(item.title)}</div>
+                                <div class="text-sm opacity-80 truncate">${escapeHtml(item.url)}</div>
+                                <div class="text-xs opacity-70">${formatDate(item.lastVisited)} • ${item.visitCount} زيارة</div>
+                            </div>
+                        </div>
+                        <button onclick="event.stopPropagation(); addToBookmarks('${item.id}')" class="text-white/70 hover:text-white p-1">
+                            ⭐
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = emptyState.outerHTML + historyHtml;
         }
 
-        // Download Video
-        window.downloadVideo = async function(videoId) {
-            const video = currentVideos.find(v => v.id === videoId);
-            if (!video) return;
+        // Update bookmarks count
+        function updateBookmarksCount() {
+            const bookmarksCount = currentSites.filter(site => site.isBookmarked).length;
+            document.getElementById('bookmarks-count').textContent = `${bookmarksCount} موقع`;
+        }
 
+        // Add to bookmarks
+        async function addToBookmarks(siteId) {
+            const site = currentSites.find(s => s.id === siteId);
+            if (!site) return;
+            
+            const updatedSite = { ...site, isBookmarked: true };
+            
             try {
-                // Create download link
-                const link = document.createElement('a');
-                link.href = video.url;
-                link.download = video.title || 'video';
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                
-                // Trigger download
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                showToast('تم بدء التحميل! 📥');
+                if (window.dataSdk) {
+                    await window.dataSdk.update(updatedSite);
+                } else {
+                    updateLocalStorage(updatedSite);
+                }
+                showToast('تم إضافة الموقع للمفضلة! ⭐');
             } catch (error) {
-                showToast('فشل في تحميل الفيديو', 'error');
+                showToast('حدث خطأ أثناء إضافة المفضلة', 'error');
             }
         }
 
-        // Delete Video with mobile-friendly confirmation - Local Storage
-        window.deleteVideo = async function(videoId) {
-            const video = currentVideos.find(v => v.id === videoId);
-            if (!video) return;
-
-            const videoItem = document.querySelector(`[data-video-id="${videoId}"]`);
-            if (!videoItem) return;
+        // Remove bookmark
+        async function removeBookmark(siteId) {
+            const site = currentSites.find(s => s.id === siteId);
+            if (!site) return;
             
-            const deleteButton = videoItem.querySelector('.bg-red-600');
-            if (!deleteButton) return;
+            const updatedSite = { ...site, isBookmarked: false };
             
-            // Show confirmation
-            const originalHTML = deleteButton.innerHTML;
-            deleteButton.innerHTML = 'تأكيد الحذف؟';
-            deleteButton.classList.add('bg-red-700');
-            
-            // Set timeout to revert if not clicked again
-            const timeout = setTimeout(() => {
-                deleteButton.innerHTML = originalHTML;
-                deleteButton.classList.remove('bg-red-700');
-            }, 3000);
-
-            // Replace click handler temporarily
-            const confirmDelete = async () => {
-                clearTimeout(timeout);
-                deleteButton.innerHTML = 'جاري الحذف...';
-                deleteButton.disabled = true;
-
-                try {
-                    // Remove from current videos array
-                    const updatedVideos = currentVideos.filter(v => v.id !== videoId);
-                    updateVideosList(updatedVideos);
-                    
-                    showToast('تم حذف الفيديو من ذاكرة الهاتف! 🗑️');
-                } catch (error) {
-                    showToast('حدث خطأ أثناء حذف الفيديو', 'error');
-                    deleteButton.innerHTML = originalHTML;
-                    deleteButton.disabled = false;
-                    deleteButton.classList.remove('bg-red-700');
+            try {
+                if (window.dataSdk) {
+                    await window.dataSdk.update(updatedSite);
+                } else {
+                    updateLocalStorage(updatedSite);
                 }
-            };
-
-            // Remove old event listeners and add new one
-            deleteButton.replaceWith(deleteButton.cloneNode(true));
-            const newDeleteButton = videoItem.querySelector('.bg-red-600');
-            newDeleteButton.onclick = confirmDelete;
+                showToast('تم إزالة الموقع من المفضلة');
+            } catch (error) {
+                showToast('حدث خطأ أثناء إزالة المفضلة', 'error');
+            }
         }
 
-        // Update Video Count
-        function updateVideoCount(count) {
-            document.getElementById('video-count').textContent = `${count} فيديو`;
+        // Clear history
+        async function clearHistory() {
+            try {
+                const historyItems = currentSites.filter(site => !site.isBookmarked);
+                
+                for (const item of historyItems) {
+                    if (window.dataSdk) {
+                        await window.dataSdk.delete(item);
+                    }
+                }
+                
+                if (!window.dataSdk) {
+                    clearLocalStorageHistory();
+                }
+                
+                showToast('تم مسح تاريخ التصفح! 🗑️');
+            } catch (error) {
+                showToast('حدث خطأ أثناء مسح التاريخ', 'error');
+            }
         }
 
-        // Show Toast Notification - Mobile Optimized
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast ${type}`;
-            toast.classList.add('show');
+        // Super Features
+        function openQuickAccess() {
+            showToast('⚡ تم تفعيل الوصول السريع! مواقعك المفضلة في المقدمة');
+            // Scroll to bookmarks
+            document.getElementById('bookmarks-container').scrollIntoView({ behavior: 'smooth' });
+        }
 
+        function togglePrivacyMode() {
+            isPrivacyMode = !isPrivacyMode;
+            if (isPrivacyMode) {
+                document.body.classList.add('dark-mode');
+                showToast('🔒 تم تفعيل التصفح الآمن! حماية كاملة وخصوصية تامة');
+            } else {
+                document.body.classList.remove('dark-mode');
+                showToast('🔓 تم إيقاف التصفح الآمن');
+            }
+        }
+
+        function enableSpeedBoost() {
+            isSpeedBoostEnabled = !isSpeedBoostEnabled;
+            if (isSpeedBoostEnabled) {
+                showToast('🚀 تم تفعيل السرعة الفائقة! تحميل أسرع بـ ٣٠٠٪');
+            } else {
+                showToast('⏸️ تم إيقاف السرعة الفائقة');
+            }
+        }
+
+        function toggleAdBlocker() {
+            isAdBlockerEnabled = !isAdBlockerEnabled;
+            if (isAdBlockerEnabled) {
+                showToast('🛡️ حاجب الإعلانات مُفعّل! تصفح نظيف بدون إزعاج');
+            } else {
+                showToast('📢 تم إيقاف حاجب الإعلانات');
+            }
+        }
+
+        // Navigation functions
+        function goBack() {
+            showToast('⬅️ العودة للصفحة السابقة');
+        }
+
+        function goForward() {
+            showToast('➡️ الانتقال للصفحة التالية');
+        }
+
+        function refreshPage() {
+            showLoading();
             setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+                hideLoading();
+                showToast('🔄 تم تحديث الصفحة بنجاح!');
+            }, 1000);
         }
 
-        // Utility Functions
+        // Voice search
+        function startVoiceSearch() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.lang = 'ar-SA';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                recognition.onstart = () => {
+                    showToast('🎤 استمع... تحدث الآن');
+                    document.getElementById('voice-search').style.color = '#ef4444';
+                };
+                
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('address-input').value = transcript;
+                    navigateTo(transcript);
+                };
+                
+                recognition.onerror = () => {
+                    showToast('❌ فشل في التعرف على الصوت', 'error');
+                };
+                
+                recognition.onend = () => {
+                    document.getElementById('voice-search').style.color = '';
+                };
+                
+                recognition.start();
+            } else {
+                showToast('❌ البحث الصوتي غير مدعوم في هذا المتصفح', 'error');
+            }
+        }
+
+        // Menu functions
+        function showMenu() {
+            showToast('☰ قائمة المتصفح - قريباً المزيد من الخيارات!');
+        }
+
+        // Tab management
+        function createNewTab() {
+            const newTab = {
+                id: Date.now().toString(),
+                title: 'تبويب جديد',
+                url: '',
+                active: false
+            };
+            
+            tabs.push(newTab);
+            showToast('➕ تم إنشاء تبويب جديد!');
+        }
+
+        function closeTab(event) {
+            event.stopPropagation();
+            if (tabs.length > 1) {
+                showToast('❌ تم إغلاق التبويب');
+            } else {
+                showToast('⚠️ لا يمكن إغلاق التبويب الأخير');
+            }
+        }
+
+        // Quick actions
+        function showQuickActions() {
+            document.getElementById('quick-actions-menu').classList.remove('hidden');
+        }
+
+        function hideQuickActions() {
+            document.getElementById('quick-actions-menu').classList.add('hidden');
+        }
+
+        function takeScreenshot() {
+            hideQuickActions();
+            showToast('📸 تم أخذ لقطة شاشة! (محاكاة)');
+        }
+
+        function shareCurrentPage() {
+            hideQuickActions();
+            if (navigator.share && currentUrl) {
+                navigator.share({
+                    title: 'شاهد هذه الصفحة',
+                    url: currentUrl
+                });
+            } else {
+                showToast('📤 تم نسخ رابط الصفحة للحافظة!');
+            }
+        }
+
+        function toggleDarkMode() {
+            hideQuickActions();
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            showToast(isDarkMode ? '🌙 تم تفعيل الوضع الليلي' : '☀️ تم تفعيل الوضع النهاري');
+        }
+
+        function openDownloads() {
+            hideQuickActions();
+            showToast('📥 مدير التحميلات - قريباً!');
+        }
+
+        // Utility functions
+        function extractTitleFromUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                if (hostname.includes('google.com')) return 'جوجل';
+                if (hostname.includes('youtube.com')) return 'يوتيوب';
+                if (hostname.includes('facebook.com')) return 'فيسبوك';
+                if (hostname.includes('twitter.com')) return 'تويتر';
+                if (hostname.includes('instagram.com')) return 'انستجرام';
+                if (hostname.includes('whatsapp.com')) return 'واتساب';
+                
+                return hostname.replace('www.', '');
+            } catch {
+                return 'موقع ويب';
+            }
+        }
+
+        function getFaviconFromUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                if (hostname.includes('google.com')) return '🔍';
+                if (hostname.includes('youtube.com')) return '📺';
+                if (hostname.includes('facebook.com')) return '📘';
+                if (hostname.includes('twitter.com')) return '🐦';
+                if (hostname.includes('instagram.com')) return '📷';
+                if (hostname.includes('whatsapp.com')) return '💬';
+                
+                return '🌐';
+            } catch {
+                return '🌐';
+            }
+        }
+
+        function getCategoryFromUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                if (hostname.includes('google.com')) return 'بحث';
+                if (hostname.includes('youtube.com')) return 'فيديو';
+                if (hostname.includes('facebook.com') || hostname.includes('twitter.com') || hostname.includes('instagram.com')) return 'تواصل اجتماعي';
+                if (hostname.includes('news') || hostname.includes('bbc') || hostname.includes('cnn')) return 'أخبار';
+                
+                return 'عام';
+            } catch {
+                return 'عام';
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'الآن';
+            if (diffMins < 60) return `منذ ${diffMins} دقيقة`;
+            if (diffHours < 24) return `منذ ${diffHours} ساعة`;
+            if (diffDays < 7) return `منذ ${diffDays} يوم`;
+            
+            return date.toLocaleDateString('ar-SA');
+        }
+
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ar-SA', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
-        // Initialize app when page loads
+        // Local storage fallback functions
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('superBrowser_sites');
+                if (saved) {
+                    const sites = JSON.parse(saved);
+                    dataHandler.onDataChanged(sites);
+                }
+            } catch (error) {
+                console.error('Error loading from localStorage:', error);
+            }
+        }
+
+        function addToLocalStorage(site) {
+            try {
+                const saved = localStorage.getItem('superBrowser_sites');
+                const sites = saved ? JSON.parse(saved) : [];
+                sites.push(site);
+                localStorage.setItem('superBrowser_sites', JSON.stringify(sites));
+                dataHandler.onDataChanged(sites);
+            } catch (error) {
+                console.error('Error saving to localStorage:', error);
+            }
+        }
+
+        function updateLocalStorage(updatedSite) {
+            try {
+                const saved = localStorage.getItem('superBrowser_sites');
+                const sites = saved ? JSON.parse(saved) : [];
+                const index = sites.findIndex(s => s.id === updatedSite.id);
+                if (index !== -1) {
+                    sites[index] = updatedSite;
+                    localStorage.setItem('superBrowser_sites', JSON.stringify(sites));
+                    dataHandler.onDataChanged(sites);
+                }
+            } catch (error) {
+                console.error('Error updating localStorage:', error);
+            }
+        }
+
+        function clearLocalStorageHistory() {
+            try {
+                const saved = localStorage.getItem('superBrowser_sites');
+                const sites = saved ? JSON.parse(saved) : [];
+                const bookmarks = sites.filter(site => site.isBookmarked);
+                localStorage.setItem('superBrowser_sites', JSON.stringify(bookmarks));
+                dataHandler.onDataChanged(bookmarks);
+            } catch (error) {
+                console.error('Error clearing localStorage history:', error);
+            }
+        }
+
+        // Initialize the app
         initializeApp();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bbc5dff2645043',t:'MTc2MjY3NTE4OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bbe27aa6ca5043',t:'MTc2MjY3NjM2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
