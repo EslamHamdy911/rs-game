@@ -895,7 +895,7 @@
         }
 
         // Download Video
-        async function downloadVideo(videoId) {
+        window.downloadVideo = async function(videoId) {
             const video = currentVideos.find(v => v.id === videoId);
             if (!video) return;
 
@@ -919,12 +919,15 @@
         }
 
         // Delete Video with mobile-friendly confirmation - Local Storage
-        async function deleteVideo(videoId) {
+        window.deleteVideo = async function(videoId) {
             const video = currentVideos.find(v => v.id === videoId);
             if (!video) return;
 
             const videoItem = document.querySelector(`[data-video-id="${videoId}"]`);
+            if (!videoItem) return;
+            
             const deleteButton = videoItem.querySelector('.bg-red-600');
+            if (!deleteButton) return;
             
             // Show confirmation
             const originalHTML = deleteButton.innerHTML;
@@ -935,7 +938,6 @@
             const timeout = setTimeout(() => {
                 deleteButton.innerHTML = originalHTML;
                 deleteButton.classList.remove('bg-red-700');
-                deleteButton.onclick = () => deleteVideo(videoId);
             }, 3000);
 
             // Replace click handler temporarily
@@ -955,11 +957,13 @@
                     deleteButton.innerHTML = originalHTML;
                     deleteButton.disabled = false;
                     deleteButton.classList.remove('bg-red-700');
-                    deleteButton.onclick = () => deleteVideo(videoId);
                 }
             };
 
-            deleteButton.onclick = confirmDelete;
+            // Remove old event listeners and add new one
+            deleteButton.replaceWith(deleteButton.cloneNode(true));
+            const newDeleteButton = videoItem.querySelector('.bg-red-600');
+            newDeleteButton.onclick = confirmDelete;
         }
 
         // Update Video Count
@@ -1000,5 +1004,5 @@
         // Initialize app when page loads
         initializeApp();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bbb28400eb5043',t:'MTc2MjY3NDM5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bbc5dff2645043',t:'MTc2MjY3NTE4OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
